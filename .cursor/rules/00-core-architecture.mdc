@@ -93,45 +93,7 @@ SOP（人写的自然语言规范）必须经 Planner Agent 解析为 WorkflowTe
 
 ---
 
-## 当前阶段开发目标
-
-第一阶段必须优先完成：
-
-1. 登录与身份入口
-2. 平台后台与租户后台双控制台（+ System Console）
-3. 多租户模型
-4. RBAC 权限体系
-5. 后台 Layout 与菜单结构
-6. 页面骨架
-7. 模块目录规范
-8. mock service
-9. API 返回结构
-10. 事件与审计接口预留
-
----
-
-## 第一阶段禁止行为
-
-在当前阶段，不允许：
-
-- 接入真实 Facebook / X / TikTok
-- 接入 OpenClaw
-- 实现真实任务执行
-- 编写复杂自动化逻辑
-- 实现复杂流程拖拽
-- 在页面组件中编写复杂业务逻辑
-
----
-
 ## 架构原则
-
-### 控制平面优先
-
-先完成：管理结构、UI结构、模块边界、接口规范，再接入执行逻辑。
-
-### mock-first
-
-所有数据先使用 mock service / seed data，不要提前接入真实 API。
 
 ### 模块解耦
 
@@ -145,3 +107,10 @@ SOP（人写的自然语言规范）必须经 Planner Agent 解析为 WorkflowTe
 ### 可扩展性
 
 任何模块设计时必须考虑未来可扩展：Agent runtime、Workflow engine、Skills execution、Terminal connectors。
+
+### 禁止事项
+
+- 在页面组件中编写复杂业务逻辑
+- 混用 Identity / Agent / Terminal 概念
+- 绕过 service 层直接访问 repository 或 mock
+- 修改不相关模块

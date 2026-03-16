@@ -1,0 +1,74 @@
+---
+alwaysApply: true
+---
+
+# Worker 执行规则
+
+## 目标
+Worker Agent 执行任务时必须通过统一适配链调用 LLM，输出必须结构化校验，执行过程必须写入 Runtime 日志。
+
+## 1. LLM 调用链（必须遵守）
+
+Worker 执行链路：
+```
+WorkflowInstanceNode → Worker AgentTemplate → Worker Skill
+  → Worker LLM Adapter → llmExecutor → Provider
+```
+
+所有 LLM 调用必须经由 `executeLLM(request: LLMExecuteRequest): Promise<LLMExecuteResult>`。
+
+llmExecutor 根据 modelConfig.provider 路由到对应 Provider（openai / openai_compatible）。
+
+禁止在 Worker 代码中：
+- 直接 import OpenAI SDK
+- 直接调用 openai.chat.completions.create
+- 直接发起 fetch 到任意 LLM 提供商
+- 在页面层发起 LLM 请求
+
+## 2. 输出结构与校验
+
+- 所有 Worker LLM 调用必须要求模型返回 JSON 格式
+- 输出必须通过 Parser + Schema 校验后才能写入 Runtime
+- Content Creator：content、summary、tags、notes 必填
+- Content Reviewer：reviewResult 必为 approved/revise，issues、suggestions、summary 存在
+
+### 解析失败处理
+当 JSON 提取失败、解析失败或 Schema 校验失败时：
+- **不得**写入 WorkflowInstanceNode.resultSummary 或 reviewSummary
+- 必须设置 node.status = failed
+- 由 Supervisor 处理后续恢复
+
+### 错误必须中文
+Parser 校验错误必须提供 messageZh 供前台展示，禁止错误信息仅英文。
+
+## 3. Runtime 日志集成
+
+执行开始、完成、失败必须写入 WorkflowRuntimeLog：
+- worker_llm_execution_started
+- worker_llm_execution_completed
+- worker_llm_execution_failed
+
+### 失败必须进入 Supervisor
+当 LLM 调用失败、JSON 解析失败或 Schema 校验失败时触发：
+- node.status = failed
+- node.errorSummary = 错误摘要（中文）
+- Supervisor analyze → recovery
+
+## 4. Worker 写入权限
+
+Worker 仅允许写入：
+- WorkflowInstanceNode.resultSummary
+- WorkflowInstanceNode.reviewSummary
+- WorkflowInstanceNode.workerOutputJson
+- status、completedAt、errorSummary 等运行时字段
+
+**禁止写入**：WorkflowTemplate、WorkflowTemplateNode。
+
+## 禁止事项
+- Worker 或 Adapter 直接 import 或调用 OpenAI
+- 绕过 llmExecutor 的 LLM 调用
+- 未校验即写入 Runtime
+- 解析失败时静默跳过
+- 无日志执行
+- 失败时跳过 Supervisor
+- Worker 越权写入 Template 层

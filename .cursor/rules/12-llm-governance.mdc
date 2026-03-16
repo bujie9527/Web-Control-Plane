@@ -1,0 +1,87 @@
+---
+alwaysApply: true
+---
+
+# LLM 治理规则
+
+## 1. 统一 LLM 执行器
+
+所有真实模型调用必须通过统一的 llmExecutor，禁止页面层、Agent 层或 service 层直接散落 provider 调用。
+
+执行器必须返回结构化结果：
+- success、rawText、parsedJson
+- errorCode、errorMessage、errorMessageZh
+- modelKey、provider、latencyMs
+
+模型配置对象至少支持：provider、modelKey、isEnabled、isDefault、temperature、maxTokens、timeoutMs、retryCount、structuredOutputMode、fallbackModelKey。
+
+前台错误必须中文化，禁止将 provider 原始英文错误直接暴露给用户。
+
+## 2. LLM 配置中心
+
+LLM Configuration Center（`/system/llm-configs`）是系统级模型治理入口，包含三个区块：
+- **模型提供商**（Provider）
+- **模型配置**（ModelConfig）
+- **Agent 模型绑定**（AgentBinding）
+
+每个区块必须支持真实交互（新增、编辑、启用/停用、状态反馈），所有交互必须中文化。模型配置不得长期写死在代码常量中。
+
+## 3. Agent-LLM 绑定
+
+AgentLLMBinding 对象至少包含：agentTemplateId、modelConfigId、bindingType（primary/fallback）、priority、isEnabled。
+
+- 每个 Agent 至少一个主模型绑定
+- 同一 Agent 不得存在多个启用中的主绑定（设置新主模型时替换旧绑定）
+- Adapter 必须通过 binding service 获取模型，禁止写死 modelConfigId
+- 前台必须可配置主模型与备用模型，仅展示已启用模型配置
+- 不同 Agent 可使用不同模型（Planner → 规划模型，Creator → 生成模型等）
+
+## 4. Provider 与模型治理
+
+- Provider 与 ModelConfig 必须分层，不得混为一个对象
+- Provider 状态：active / disabled
+- ModelConfig 支持：isEnabled、isDefault
+- 当前优先稳定 OpenAI 单 Provider 链路，结构预留多 Provider 扩展
+- 前台展示：提供商、模型名称、modelKey、默认模型、启用状态、适用 Agent 分类
+
+## 5. 凭证安全
+
+- LLM 密钥必须存储在 LLMCredential 对象中，以 encryptedSecret 形式存储
+- 前台永远不返回完整密钥，只返回 secretMasked（是否已配置、掩码、状态）
+- 密钥只能服务端读取，前台不得持有真实 API Key
+- LLMProvider 使用 credentialId 关联凭证，不再使用 apiKeyRef
+
+## 6. 服务端执行
+
+前端不得长期直接调用 OpenAI 作为正式主路径。完整调用链：
+
+```
+AgentTemplate → AgentLLMBinding → LLMModelConfig → LLMProvider → LLMCredential
+  → Server LLM Executor → Provider Adapter → OpenAI / 其他
+```
+
+服务端基于 Binding → ModelConfig → Provider → Credential 解析最终调用配置。VITE_OPENAI_API_KEY 最多仅作开发兼容路径，不得作为正式平台方案。
+
+## 7. Provider 测试
+
+- 提供商测试连接按钮必须可执行（可点击、有提交中状态、返回成功/失败、中文提示）
+- Provider 必须支持启用与停用状态切换
+- 测试连接不得长期停留在 mock 成功，应真实读取 Provider + Credential + 模型能力
+- 中文反馈：测试连接成功/失败、提供商未启用、缺少接口地址、缺少密钥引用
+
+## 8. API 要求
+
+- `POST /api/llm/execute` — 统一 LLM 执行 API
+- `POST /api/llm/test-provider` — Provider 测试连接 API
+- 所有错误提示必须中文（凭证未配置、提供商未启用、模型不可用、未授权、超时、不可达）
+
+## 禁止事项
+- 前端 env 变量作为唯一密钥来源
+- 前端直接持有真实生产密钥
+- 将完整密钥返回给前端
+- 绕过 Credential 对象存储密钥
+- Provider 缺少 Credential 仍执行真实调用
+- 执行 API 绕过 Binding / ModelConfig / Provider / Credential 解析链路
+- 页面点击测试连接只返回固定 mock 成功
+- 在 adapter 中写死 modelConfigId 常量
+- 前台直接显示英文原始枚举或错误

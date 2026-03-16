@@ -50,7 +50,7 @@ npm run clean        # 删除 dist 目录
 
 ## 架构概览
 
-本项目采用"控制平面骨架"架构。当前阶段使用 **mock-first** 策略，所有数据通过 mock service/repository 提供，不接入真实第三方平台或自动化执行引擎。
+本项目采用"控制平面骨架"架构。主要业务模块已从 mock 迁移到 Prisma + SQLite 持久化，Facebook Pages API 已真实接入。详细系统状态见 [docs/status/](docs/status/)。
 
 ### 三控制台结构（Three-Shell Architecture）
 
@@ -109,8 +109,26 @@ server/          # Express 后端，提供 LLM 执行 API 与凭证管理
 - **中文标签：** 所有面向用户的显示文字集中在 `src/core/labels/` 和各模块的 `labels.ts` 文件中，不散落在页面组件里
 - **Mock 用户：** 登录页下拉选择，`platform_admin` 进入 `/platform`，`tenant_admin` 进入 `/tenant`（见 [src/core/auth/mockUsers.ts](src/core/auth/mockUsers.ts)）
 - **通用组件复用：** 新增页面前先检查 `src/components/` 中的 Table、Card、Drawer、Dialog、EmptyState、StatusTag、ListPageToolbar 是否可复用，不得随意创建新样式
-- **列表页标准能力：** 所有列表页必须包含完整的标准能力，详见 `.cursor/rules/64-list-page-standard-checklist.mdc`。核心要求：工具栏（新建、搜索、状态筛选、批量操作区）、表格行操作（查看、编辑、删除含二次确认弹窗）、Checkbox 多选与批量删除、EmptyState（含新建入口）、Pagination（含总数）、加载与错误态。开发完成后必须逐项自检。
-- **详情工作台标准能力：** 所有详情工作台页必须包含完整的标准结构，详见 `.cursor/rules/65-detail-workbench-checklist.mdc`。核心要求：顶部返回条（返回按钮+面包屑）、摘要条（名称、状态标签、关键字段、编辑/删除按钮）、水平 Tab 导航（state 控制、不刷页）、每个 Tab 独立子组件文件、Tab 内 Card 分区 + EmptyState。开发完成后必须逐项自检。
+- **列表页标准能力：** 所有列表页必须包含完整的标准能力，详见 `.cursor/rules/14-list-page-checklist.mdc`。核心要求：工具栏（新建、搜索、状态筛选、批量操作区）、表格行操作（查看、编辑、删除含二次确认弹窗）、Checkbox 多选与批量删除、EmptyState（含新建入口）、Pagination（含总数）、加载与错误态。开发完成后必须逐项自检。
+- **详情工作台标准能力：** 所有详情工作台页必须包含完整的标准结构，详见 `.cursor/rules/15-detail-workbench-checklist.mdc`。核心要求：顶部返回条（返回按钮+面包屑）、摘要条（名称、状态标签、关键字段、编辑/删除按钮）、水平 Tab 导航（state 控制、不刷页）、每个 Tab 独立子组件文件、Tab 内 Card 分区 + EmptyState。开发完成后必须逐项自检。
+- **开发进度追踪：** 每次开发完成后必须更新 `docs/status/CHANGELOG.md`，详见 `.cursor/rules/99-dev-progress-tracking.mdc`。
+
+### 系统状态文档
+
+系统当前状态的权威文档在 `docs/status/` 目录：
+- `system-architecture.md` — 系统结构与功能说明
+- `codebase-index.md` — 代码结构索引
+- `completed-features.md` — 已完成功能清单
+- `product-blueprint.md` — 产品蓝图与差距分析
+- `CHANGELOG.md` — 动态开发进度日志
+
+### 规则文件索引
+
+`.cursor/rules/` 包含 17 个规则文件：
+- `00` 核心架构 / `01` 语言协作 / `02` UI 设计 / `03` 控制台结构 / `04` 编码与 API
+- `05` Identity 模型 / `06` 项目域 / `07` 流程系统 / `08` Agent 模板
+- `09` Planner Agent / `10` 运行监督 / `11` Worker 执行 / `12` LLM 治理
+- `13` 生命周期与安全 / `14` 列表页清单 / `15` 详情工作台清单 / `16` 服务器部署
 
 ### 语言与协作规范
 

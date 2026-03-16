@@ -1,0 +1,270 @@
+---
+alwaysApply: true
+---
+
+# Agent 模板工厂与治理规则
+
+## 模块定位
+
+Agent Template Factory（Agent 模板工厂）是平台控制平面中的系统级模块，用于定义、治理、复制、派生、版本化、发布和下线可复用的 AI 执行角色模板。
+
+它不是：
+
+- 租户自有对象
+- 聊天人格配置器
+- 简单的 Prompt 模板仓库
+- 运行时执行器
+- 终端接入模块
+
+它是：
+
+- 平台级模板资产工厂
+- AI 执行角色标准定义中心
+- Workflow 与 Skill 之间的标准角色层
+- 平台治理 AI 执行模板的控制模块
+
+## 架构位置
+
+系统必须维持以下主链路：
+
+```
+Project → Workflow → Agent Template / Agent Binding → Skill → Executor → Terminal → Result
+```
+
+其中：
+
+- Agent Template 属于控制平面
+- Agent Binding 属于项目/流程执行绑定关系
+- Agent Template 不能越过 Skill / Executor 直接承担真实执行职责
+
+---
+
+## 1. Agent Template 结构维度
+
+Agent Template 不是自由文本 Prompt 对象。必须是结构化、可治理、可复用、可审计的平台级模板资产。
+
+### 1.1 模板身份
+
+- id、name、code、description、roleType
+
+### 1.2 模板分类
+
+- category（planning / execution / coordination）
+- domain
+- sceneTags
+
+### 1.3 工厂来源信息
+
+- archetypeCode（基础原型编码）
+- parentTemplateId（父模板 ID）
+- sourceTemplateId（复制来源模板 ID）
+- sourceVersion（复制来源版本号）
+
+### 1.4 生命周期信息
+
+- status（draft / active / deprecated / archived）
+- version、isLatest、isSystemPreset、isCloneable
+
+### 1.5 适用范围
+
+- supportedProjectTypeIds
+- supportedGoalTypeIds
+
+### 1.6 能力授权
+
+- supportedSkillIds
+- defaultExecutorType、allowedExecutorTypes、allowedTerminalTypes
+
+### 1.7 模型配置
+
+- defaultModelKey、fallbackModelKeys、temperature、maxTokens
+
+### 1.8 提示与输出约束
+
+- systemPromptTemplate、instructionTemplate、outputFormat
+
+### 1.9 Guardrails 安全边界
+
+- requireGoalContext、requireIdentityContext、requireSOPContext
+- requireStructuredOutput、disallowDirectTerminalAction
+
+### 1.10 审核策略
+
+- requireHumanReview、requireNodeReview、autoApproveWhenConfidenceGte
+
+### 1.11 执行模式
+
+- manual / semi_auto / full_auto
+
+---
+
+## 2. 模板治理（复制、派生、版本、状态流转）
+
+### 2.1 模板状态流转
+
+| 状态 | 含义 | 约束 |
+|---|---|---|
+| draft | 草稿 | 新建/复制生成的模板默认此状态 |
+| active | 已发布可用 | 只有此状态可供租户选择使用 |
+| deprecated | 已废弃 | 不建议新绑定，已有绑定保留 |
+| archived | 已归档 | 仅保留查询，不允许新绑定和编辑 |
+
+### 2.2 模板来源链路
+
+每个模板应尽可能保留来源信息：archetypeCode、parentTemplateId、sourceTemplateId、sourceVersion。
+
+### 2.3 模板版本
+
+至少支持 version 和 isLatest 字段。首版可不做复杂版本树 UI，但必须预留版本字段与来源关系。
+
+### 2.4 模板复制
+
+模板复制是 Agent Template Factory 的主入口能力之一。
+
+复制时应支持：生成新 name/code、调整分类、选择是否继承 Skill 绑定 / 模型配置 / Guardrails / ReviewPolicy。
+
+复制后的模板必须：sourceTemplateId 指向来源、sourceVersion 记录版本、status = draft、version = 1、isLatest = true。
+
+### 2.5 工厂优先原则
+
+系统优先支持：基于已有模板复制生成新模板、基于基础原型派生业务模板、平台集中治理模板资产。
+
+不应优先鼓励：从空白创建大量模板、租户自定义和改写平台模板、无来源追踪的模板膨胀。
+
+---
+
+## 3. Workflow-Agent 绑定规则
+
+Workflow 节点不能直接拥有一个可随意定义的 Agent，必须通过 Agent Template Binding 绑定平台已发布的模板。
+
+### 3.1 基本原则
+
+1. 模板定义属于平台控制平面
+2. 节点绑定属于项目执行平面
+3. 租户只能绑定模板，不能定义模板
+4. 节点只能在模板授权范围内进行有限覆盖
+5. 节点绑定不能突破模板的系统级边界
+
+### 3.2 绑定结构
+
+WorkflowNode 应支持：agentTemplateId、selectedSkillIds、executorStrategy、reviewPolicyOverride、templateSnapshot。
+
+templateSnapshot 用于防止模板升级直接影响历史项目运行一致性。首版可先 mock，但必须预留。
+
+### 3.3 租户允许覆盖的范围
+
+- 选择模板允许范围内的部分 Skill
+- 设置节点级 preferredExecutorType
+- 设置节点级 reviewPolicyOverride（仅限允许范围）
+
+### 3.4 租户禁止覆盖的范围
+
+- supportedProjectTypeIds / supportedGoalTypeIds
+- supportedSkillIds 的系统授权范围
+- allowedExecutorTypes / allowedTerminalTypes
+- defaultModelKey 的平台权限边界
+- Guardrails
+- 模板核心系统 Prompt 规则
+
+### 3.5 模板选择器
+
+租户侧通过 AgentTemplateSelector 或等效只读组件选择模板：只展示 active 模板、可按 ProjectType / GoalType / NodeType 过滤、展示摘要信息、不提供编辑入口。
+
+---
+
+## 4. 系统管理员 vs 租户权限边界
+
+### 4.1 系统管理员可执行
+
+- 访问 Agent Template Factory 列表页
+- 查看模板详情 / 创建 / 编辑 / 复制模板
+- 修改模板状态 / 管理模板版本
+- 查看模板被引用情况与来源关系
+
+### 4.2 租户管理员 / 租户用户可执行
+
+- 在项目中查看可用模板
+- 在 Workflow 节点中选择模板
+- 查看模板只读说明
+- 在授权范围内配置节点绑定
+
+### 4.3 租户禁止执行
+
+- 创建 / 编辑 / 复制模板
+- 修改模板状态
+- 改写模板的 Skill / Executor / Terminal 边界
+- 改写模板的 Guardrails
+- 绕过平台审核策略和系统约束
+
+### 4.4 路由边界
+
+系统管理员专属路由：/system/agent-factory、/system/agent-factory/new、/system/agent-factory/[id]、/system/agent-factory/[id]/edit。
+
+租户侧只能看到：AgentTemplateSelector、模板只读说明弹窗或只读面板、Workflow 节点中的模板绑定区。
+
+UI 结构上必须明确区分模板工厂管理页面与模板消费/绑定页面。若当前尚未完成完整权限体系，必须先提供 mock guard 或占位权限守卫。
+
+---
+
+## 5. Agent 资产库基线
+
+Agent Library 必须展示真实可用的 AgentTemplate 资产，不是仅展示占位示例内容。
+
+### 5.1 最低资产要求
+
+至少应包含：流程规划助手、内容生成 Agent、内容审核 Agent、发布 Agent、结果记录 Agent、研究/搜索 Agent（如已存在）、执行监督 Agent（可预留占位）。
+
+### 5.2 中文展示
+
+前台必须展示：中文名称、中文分类、中文角色说明、中文用途说明。category 映射：planning → 规划类、execution → 执行类、coordination → 协调类。
+
+### 5.3 详情页关系信息
+
+至少展示：绑定的 Skill、适用项目类型、被哪些 WorkflowTemplateNode 引用、被哪些 WorkflowPlanningDraftNode 推荐。
+
+---
+
+## 6. Agent 作用域边界（三层分离）
+
+### 6.1 Project 层 — Agent 范围与偏好
+
+可定义：allowedAgentTemplateIds、preferredAgentTemplateIds、defaultPlannerAgentTemplateId、defaultSupervisorAgentTemplateId（预留）。
+
+Project 不直接决定具体节点由哪个 Agent 执行。
+
+前台文案使用：可用 Agent 范围、推荐 Agent 组合、默认流程规划助手。禁止使用：项目执行 Agent、项目绑定 Agent、项目节点 Agent。
+
+### 6.2 Workflow 层 — Agent 推荐与执行绑定
+
+WorkflowTemplateNode / WorkflowPlanningDraftNode 负责：recommendedAgentTemplateId、allowedAgentRoleTypes、allowedSkillIds、executorStrategy、reviewPolicy。
+
+### 6.3 Runtime 层 — 实际执行选择
+
+WorkflowInstanceNode / AgentBinding 负责：selectedAgentTemplateId、selectedSkillIds、runtimeExecutorStrategy、fallbackAgentTemplateId（后续预留）。
+
+---
+
+## 禁止事项
+
+禁止：
+
+- 把 Agent Template 建模为 tenant-owned 对象
+- 让 Agent Template 直接执行终端动作
+- 把 Agent Template 简化成只包含 Prompt 的配置
+- 让 Agent Template 与项目运行态强耦合
+- 跳过结构化的授权与安全约束
+- 让模板定义和租户运行时绑定混在同一对象里
+- 让租户直接编辑平台模板
+- 让 active 模板在无约束情况下被任意破坏性修改
+- 让模板复制后失去来源追踪信息 / 版本信息缺失 / 能力边界无法审计
+- 在租户项目内创建平台级模板
+- 在 Workflow 节点中临时写入完整 Agent 定义代替模板绑定
+- 让节点绑定直接操作终端权限或覆盖平台 Guardrails
+- 把模板工厂入口暴露给租户
+- 在租户工作流中隐式提供模板编辑能力
+- 因为首版使用 mock 数据而省略权限边界
+- Agent 库长期保留仅占位示例
+- 前台直接显示未经处理的英文枚举
+- 在 Project 层配置节点级执行 Agent
+- Project 与 Workflow 同时承担同一层级的 Agent 绑定
+- 让项目编辑页与流程节点页产生双重执行绑定语义

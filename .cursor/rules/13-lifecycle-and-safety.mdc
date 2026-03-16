@@ -1,0 +1,73 @@
+---
+alwaysApply: true
+---
+
+# 生命周期与安全删除规则
+
+## 目标
+核心控制平面对象必须支持完整的生命周期管理与安全删除，防止误删有引用的对象。
+
+## 1. 生命周期操作
+
+核心对象必须支持：
+- 创建（create）
+- 编辑（update）
+- 停用（disable）
+- 归档（archive）
+- 安全删除（safeDelete）
+
+## 2. 对象状态定义
+
+| 对象 | status 可选值 |
+|------|---------------|
+| WorkflowTemplate | draft \| active \| archived |
+| WorkflowPlanningSession | draft \| active \| abandoned \| archived |
+| Project | active \| archived |
+| AgentTemplate | active \| disabled \| archived |
+| LLMModelConfig | 通过 isEnabled 表示停用 |
+
+## 3. 操作语义
+
+- **停用**：对象仍存在，但不可用于新建/执行
+- **归档**：对象进入历史态，不再参与常规列表
+- **删除**：仅允许在无引用时执行
+
+## 4. 删除前引用检查
+
+删除前必须通过 referenceCheckService 执行引用检查：
+- checkWorkflowTemplateReferences()
+- checkAgentTemplateReferences()
+- checkModelConfigReferences()
+- checkProjectReferences()
+
+返回结构：
+```ts
+{
+  inUse: boolean
+  referenceCount: number
+  referenceTypes: string[]
+}
+```
+
+引用存在时禁止删除，返回引用数量与引用类型。
+
+## 5. 删除交互规范
+
+- 弹窗确认，正文明确显示被删除对象的资源名称
+- 中文提示（如：「该模板仍被 3 个流程实例使用，无法删除」）
+- 引用存在时禁用删除按钮或给出明确错误
+- 删除成功后 Toast 提示并刷新列表
+- 错误提示必须中文
+
+## 6. 列表 UI 要求
+
+所有核心列表操作列必须包含：
+- 编辑
+- 停用
+- 归档
+- 删除（需引用检查 + 中文确认弹窗）
+
+## 禁止事项
+- 未做引用检查即执行删除
+- 引用存在时仍允许删除
+- 错误提示使用英文

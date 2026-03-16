@@ -1,0 +1,185 @@
+---
+alwaysApply: true
+---
+
+# 运行中心与执行监督规则（Runtime & Supervisor）
+
+## 1. 流程运行中心（Runtime Center）
+
+### 定位
+Workflow Runtime Center 用于展示和管理 WorkflowInstance 的运行状态、节点进度、执行摘要与人工介入入口。
+
+**不是**：流程模板工厂、流程规划工作台、Supervisor Agent 本体
+**是**：流程运行可视化中心、WorkflowInstance 主查看入口、Supervisor 承载面
+
+### 核心原则
+- Runtime Center 面向 WorkflowInstance，不面向 WorkflowTemplate，二者必须分层
+- 必须可视化节点运行状态
+- 必须展示节点执行摘要
+- 必须为人工介入预留入口
+
+### 节点状态
+
+| 状态 | 说明 |
+|---|---|
+| pending | 待执行 |
+| running | 执行中 |
+| waiting_review | 等待审核 |
+| completed | 已完成 |
+| failed | 失败 |
+| skipped | 已跳过（预留） |
+
+前台必须使用中文映射。
+
+### 节点执行摘要
+至少展示：selectedAgentTemplateId, selectedSkillIds 摘要, resultSummary, errorSummary, reviewSummary
+
+---
+
+## 2. 运行日志（WorkflowRuntimeLog）
+
+### 基础事件类型
+- workflow_started / workflow_completed
+- node_started / node_completed / node_failed
+- waiting_review / manual_continue
+
+### 要求
+- 日志消息、事件类型、状态标签必须中文展示
+- 所有恢复动作必须写入 WorkflowRuntimeLog
+- 本阶段不做复杂审计系统，基础日志即可
+
+---
+
+## 3. 人工操作入口
+
+至少预留以下入口（本阶段可先走 mock）：
+- **重试节点**：重新执行失败节点
+- **暂停流程**：暂停实例运行
+- **继续执行**：恢复暂停的实例
+- **标记审核通过**：标记 waiting_review 节点通过
+
+对象、入口和状态变化链路必须成立。
+
+---
+
+## 4. 执行监督 Agent（Supervisor）
+
+### 定位
+- category = coordination
+- roleType = supervisor
+- 前台中文名称：执行监督助手
+
+负责在 WorkflowInstance 运行过程中分析节点状态、错误与卡点，生成结构化监督建议。
+
+**只做分析与建议，不直接执行业务节点。**
+
+Supervisor 与 Planner 必须严格分离。
+
+### 当前阶段
+- 先使用 mock / rule-based 分析
+- 不要求真实 LLM
+- 不要求 OpenClaw
+
+---
+
+## 5. 监督决策（WorkflowSupervisorDecision）
+
+### 决策必须对象化
+禁止仅以自然语言消息代替正式决策对象。
+
+### 决策结构
+- reason：中文原因说明
+- suggestedNextAction：建议下一步
+- relatedErrorSummary：相关错误摘要
+
+### 决策类型
+
+| 类型 | 中文 |
+|---|---|
+| retry | 重试 |
+| skip | 跳过 |
+| manual_review | 人工审核 |
+| pause_workflow | 暂停流程 |
+| continue_workflow | 继续执行 |
+| abort_workflow | 终止流程 |
+| no_action | 无需操作 |
+
+### 决策状态
+- suggested → applied / dismissed
+- 应用决策后必须更新实例/节点状态并写入 RuntimeLog
+- 本阶段默认由用户确认后应用，不做完全自动执行
+
+### 页面展示
+Runtime 详情页必须可见：当前监督建议、决策类型、中文原因、建议下一步、应用/忽略/重新分析按钮。
+
+---
+
+## 6. 重试策略（Retry Policy）
+
+### 核心原则
+- 节点是否允许重试，由模板 retryPolicy 配置决定，Supervisor 不得自由决定
+- 重试必须有上限
+
+### retryPolicy 字段
+- enabled：是否允许重试
+- maxRetryCount：最大重试次数
+- retryStrategy：重试方式
+- autoRetryEnabled：是否允许自动重试
+
+### 运行节点记录
+WorkflowInstanceNode 必须记录：retryCount, lastRecoveryAction, recoveryStatus
+
+### 前台展示
+节点详情中显示：是否允许重试、最大/当前重试次数、重试方式、是否自动重试。
+
+---
+
+## 7. 备用策略（Fallback Strategy）
+
+### 核心原则
+- Fallback 必须来源于 WorkflowTemplateNode 配置（fallbackAgentTemplateIds, fallbackSkillIds）
+- Supervisor 不得自由发明新的 Agent 或 Skill
+- 切换备用时必须写入 RuntimeLog
+
+### 前台展示
+备用 Agent 列表、备用 Skill 列表、当前是否已切换。
+
+---
+
+## 8. 自愈基线
+
+### 当前阶段允许
+- 自动重试（有限）
+- 切换备用 Agent / Skill（受限）
+- 建议后人工确认
+- 恢复日志写入
+
+### 当前阶段不允许
+- 任意自动改写流程结构
+- 动态生成新节点
+- 无人工边界的完全自治恢复
+
+### Recovery 可见性
+用户必须在 Runtime Center 中看到：当前恢复状态、恢复策略、恢复建议、恢复历史日志。
+
+### 人工接管
+恢复失败或超出策略范围时，进入 manual_review / paused / abort_workflow。
+
+---
+
+## 统一禁止事项
+
+- 将 Runtime Center 与 Template 编辑页混在一起
+- 用 WorkflowTemplate 数据冒充 WorkflowInstance 运行数据
+- 在本阶段做复杂自愈逻辑或接入真实 LLM Supervisor
+- Supervisor 无人工确认直接自治改写流程
+- 将 Supervisor 决策逻辑写死在页面层
+- 将 Supervisor 建议仅隐藏在日志中
+- 直接自动应用监督建议而不留状态记录
+- 前台显示英文 decisionType / 事件类型而无中文映射
+- 无上限自动重试或未记录 retryCount 就重复执行
+- 绕过策略直接重试
+- 切换到系统中不存在的 Agent 或不在节点允许范围内的 Skill
+- 前台不展示恢复策略就静默切换
+- 无日志、无状态记录的自动恢复
+- 将自愈逻辑分散到页面层

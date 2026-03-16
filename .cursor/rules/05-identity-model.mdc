@@ -1,0 +1,209 @@
+---
+alwaysApply: true
+---
+
+# Identity 模型与项目绑定规则
+
+## 模块定位
+
+Identity / Persona 是本项目中的核心标准对象，不是普通文本字段，不是备注信息，也不是只存在于 Prompt 中的隐性设定。
+
+Identity 用于定义：
+
+- 账号是谁
+- 以什么立场说话
+- 用什么风格表达
+- 有哪些内容边界
+- 有哪些行为边界
+- 在不同平台如何适配表达与行为
+
+Identity 的作用不仅是"生成内容风格"，还包括：
+
+- 统一表达口径
+- 区分账号身份
+- 支撑矩阵账号管理
+- 为后续行为规则与平台适配提供基础对象
+
+因此不得把它降级为简单标签字段。
+
+---
+
+## 1. Identity 资源对象 vs Auth 登录身份
+
+系统中存在两类"身份"概念，必须严格区分：
+
+### 1.1 Identity 资源对象（业务域）
+
+面向业务的核心资产，用于内容创作视角与行为约束。属于租户长期核心资产，可跨项目复用。
+
+### 1.2 Auth 身份（登录与后台类型）
+
+指当前登录用户与后台类型，用于路由守卫与租户作用域：
+
+- **User**：`id`、`name`、`account`、`role`（RoleCode）、可选 `tenant`（TenantContext）
+- **AuthState**：`user | null`、`consoleType`（platform | tenant）、可选 `scopes`（预留）
+- **ConsoleType**：由 `user.tenant` 决定——有 tenant 则为 `tenant`，否则为 `platform`。登录后不可在会话中切换身份侧
+- **RoleCode**：与 04 领域模型一致（platform_owner、tenant_admin、project_manager 等）；扩展仅在 `core/types/auth.ts`
+- 判断「当前是平台还是租户」统一用 `useAuth().consoleType`；租户名/ID 从 `useAuth().user?.tenant` 取
+- Mock 用户：`core/auth/mockUsers.ts`；持久化 key 为 `awcc_auth`
+
+禁止：平台后台用「当前租户」做数据筛选；租户后台用平台身份或跨租户 ID；在组件内硬编码角色字符串（应引用 RoleCode 或常量）。
+
+---
+
+## 2. Identity Schema 标准字段
+
+Identity 必须被建模为标准资源对象，至少应具备：
+
+- id
+- tenantId
+- name
+- type
+- corePositioning
+- toneStyle
+- contentDirections
+- behaviorRules
+- platformAdaptations
+- status
+- createdAt
+- updatedAt
+
+---
+
+## 3. 结构与分层原则
+
+Identity 不得仅以以下形式存在：
+
+- 页面备注
+- Prompt 文本片段
+- 账号附注字段
+- 临时表单说明
+
+Identity 必须拥有：
+
+- 独立 schema
+- 独立 service
+- 独立 mock service
+- 可绑定到项目
+- 可绑定到任务
+- 可预留绑定到终端
+
+开发原则：
+
+- 先完成结构化资源管理，再考虑智能逻辑
+- 先完成项目绑定与任务使用，再考虑终端自动约束
+- 页面与 service 分层清晰
+- 不把 Identity 逻辑直接写入项目页面组件
+
+---
+
+## 4. 项目-Identity 绑定规则
+
+### 4.1 项目与 Identity
+
+- 一个项目可以绑定多个 Identity
+- 一个项目可以设置一个默认 Identity
+
+### 4.2 任务与 Identity
+
+- 一个任务只能选择一个主 Identity
+- 任务执行时必须明确"以谁的身份执行"
+
+### 4.3 终端与 Identity
+
+- 一个终端同一时间建议只绑定一个主 Identity
+- 一个 Identity 可以被多个终端复用
+- 当前阶段可只做结构占位
+
+### 4.4 结果与 Identity
+
+- 任务结果中显示所使用的 Identity
+- 项目结果回写中保留 Identity 信息
+
+---
+
+## 5. 页面要求
+
+### Identity 模块页面
+
+- 体现它是可复用资源库
+- 体现它是项目与账号行为的一致性约束来源
+- 不是简单"人设文案库"
+
+### 项目详情页
+
+必须新增 Identity / 身份配置相关区域或页签。
+
+### 任务创建页
+
+必须支持选择 Identity。
+
+### 任务详情页
+
+必须展示本任务使用的 Identity。
+
+### 中文展示
+
+中文页面中使用以下术语：
+
+- 身份
+- 人设
+- 身份档案
+- 人设档案
+
+---
+
+## 6. 命名规范
+
+统一优先使用：
+
+- Identity
+- Persona
+- Identity Profile
+- Persona Profile
+
+禁止使用以下混乱命名：
+
+- character
+- role setting
+- style note
+- profile note
+
+---
+
+## 7. 当前阶段目标与非目标
+
+### 当前阶段目标（Identity 1.0）
+
+1. Identity Library（身份库）
+2. Identity 标准对象 schema
+3. Identity 列表页
+4. Identity 详情页 / 工作台型详情骨架
+5. 项目绑定 Identity
+6. 任务创建时选择 Identity
+7. 终端预留绑定 Identity 的结构位
+8. 任务结果与项目结果中展示 Identity 信息
+
+### 非目标
+
+当前阶段不做：
+
+- 复杂 Persona 自动生成
+- 基于 Identity 的真实模型编排
+- 基于 Identity 的自动行为控制引擎
+- 基于 Identity 的复杂策略系统
+- Prompt 自动编译器
+
+---
+
+## 禁止事项
+
+禁止：
+
+- Identity 仅以页面备注或 Prompt 片段形式存在
+- Identity 逻辑直接写入项目页面组件（必须通过 service）
+- 将 Identity 降级为简单标签字段或自由文本
+- 混淆 Identity 资源对象与 Auth 登录身份
+- 使用 character / role setting / style note 等非标准命名
+- 平台后台用「当前租户」做 Identity 数据筛选
+- 租户后台用平台身份或跨租户 ID 访问 Identity

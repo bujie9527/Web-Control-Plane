@@ -1,0 +1,165 @@
+---
+alwaysApply: true
+---
+
+# 流程规划助手规则（Planner Agent）
+
+## 1. Planner Agent 定位
+
+Workflow Planner Agent 是流程规划域中的规划型 Agent，用于基于 SOP、项目边界和用户反馈生成与修订流程草案。
+
+- category = planning
+- roleType = planner
+- 前台中文名称：流程规划助手
+
+**不是**：普通聊天助手、运行期执行 Agent、WorkflowTemplate 本体、WorkflowInstance 监督器
+
+**是**：流程规划助手、草案生成与修订 Agent、Planning Session 的核心智能执行体
+
+---
+
+## 2. 必须支持的规划技能
+
+禁止将全部逻辑写成单一长 prompt，必须通过规划类 Skill 组织：
+
+| Skill | 职责 |
+|---|---|
+| ParseSOPToStructuredSteps | SOP 结构化解析 |
+| GenerateWorkflowDraft | 流程草案生成 |
+| ReviseWorkflowDraft | 草案修订 |
+| SummarizeWorkflowChanges | 变更摘要 |
+| SuggestNodeAgentBindings | 节点 Agent 绑定建议 |
+
+---
+
+## 3. 输入输出要求
+
+### 输入
+- WorkflowPlanningSession
+- sourceText / SOP 原文
+- projectTypeId, goalTypeId, deliverableMode
+- 当前 Draft（如存在）
+- 最新用户消息
+- 系统可用 AgentTemplate 列表
+- 系统可用 Skill 列表
+
+### 输出（必须结构化）
+- nodes（草案节点）
+- changeSummary（变更摘要）
+- riskNotes（风险提示）
+- suggestedAgentTemplateIds
+- suggestedSkillIds
+
+输出必须形成 WorkflowPlanningDraft，不得仅返回自然语言结果。
+
+---
+
+## 4. 真实 LLM 接入规则
+
+### 当前阶段限制
+- 仅允许接入 **Base Workflow Planner Agent（基础版）**
+- 仅支持两类动作：生成初稿、修订草案
+- 禁止同时接入 Execution Supervisor、内容生成/审核/发布 Agent 等
+
+### 调用链路约束
+- 真实模型输出必须进入 Draft（不得只返回文本）
+- 输出必须经过 Schema 校验 + Planning Validator
+- 不得绕过 Validator 直接发布
+
+---
+
+## 5. 结构化输出与错误处理
+
+### 解析流程
+LLM rawText → JSON 解析 → Schema 校验 → Validator 校验 → 写入 WorkflowPlanningDraft
+
+### 失败处理
+以下任一情况发生时，**不得覆盖当前 Draft**，只写入消息和错误提示：
+- 模型调用失败
+- JSON 无法解析
+- Schema 校验失败
+- Validator 校验失败
+
+### 中文错误提示（必须）
+- 流程规划助手调用失败
+- 模型返回格式异常
+- 草案结构校验失败
+- 草案未通过规则校验，已保留当前版本
+- 请检查输入后重试
+
+### 有限重试
+- JSON 解析失败时自动重试 1 次
+- 超时后提示用户重试
+
+---
+
+## 6. 基座 + 垂直派生分层
+
+### 基础规划助手（Base Planner）
+平台通用基座，负责 SOP 解析、通用草案生成/修订、变更摘要、风险提示。
+
+### 垂直 Planner
+
+| 领域 | 中文名 |
+|---|---|
+| general | 通用 |
+| social | 社媒运营 |
+| website | 建站 |
+| ai_employee | AI 员工 |
+
+### 垂直差异可体现在
+- 默认 Prompt / Strategy
+- 推荐 Agent 池 / Skill 池
+- 推荐 DeliverableMode
+- 风险提示重点
+- 模板推荐偏好
+
+### 来源关系
+垂直 Planner 必须保留：parentTemplateId, sourceTemplateId, sourceVersion。继承基础 Planner 共通能力，只覆盖业务域差异。
+
+### 当前阶段要求
+至少完成四个 Planner（基础版 + 社媒运营 + 建站 + AI 员工），其中社媒运营优先具备明确配置差异。
+
+---
+
+## 7. 能力提升路径
+
+Planner 能力提升必须通过平台治理进行，不得视为黑箱自动进化：
+
+1. **Skill 升级**：增加或优化 Planning Skills
+2. **Strategy 升级**：优化 Prompt、策略模板、领域偏好
+3. **Model 升级**：升级模型配置、fallback 模型、结构化输出能力
+4. **Validator / Guardrails 升级**：加强边界约束、校验逻辑、风险提示
+5. **Feedback 闭环升级**：通过用户修改行为、风险提示命中率、建议采纳率迭代
+
+增强应记录：changeSummary, capabilityNotes, 当前版本增强点。
+
+---
+
+## 8. 页面交互要求
+
+流程规划工作台必须支持：
+- 生成初稿
+- 根据用户消息修订草案
+- 显示 Planner 回复
+- 显示变更摘要
+- 显示风险提示
+
+前台必须清晰展示基础版/垂直版、垂直领域、来源模板、版本信息。
+
+---
+
+## 统一禁止事项
+
+- Planner Agent 与 Execution Supervisor Agent 合并
+- 在当前阶段直接自动发布模板或直接改写 WorkflowTemplate
+- 跳过 Draft 修改模板
+- 输出仅自然语言说明而无结构化结果
+- Planner 发明系统中不存在的节点类型、AgentTemplate 或 Skill
+- 改写项目不可变目标边界或交付模式边界
+- 将原始英文错误直接抛到前台
+- 解析/校验失败后仍更新当前 Draft 或继续发布流程
+- 当前阶段让多个垂直 Planner 同时接入真实模型
+- 只改中文名称而无策略差异的垂直 Planner
+- 垂直 Planner 完全脱离基座的无来源模板
+- 无版本说明静默改变 Planner 行为

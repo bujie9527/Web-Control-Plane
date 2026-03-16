@@ -1,0 +1,110 @@
+---
+alwaysApply: true
+---
+
+# 编码规范与 API 契约规则
+
+## 修改范围原则
+
+修改代码前必须：
+
+1. 确认影响模块
+2. 限制改动范围
+
+不要修改不相关文件。
+
+---
+
+## 组件复用原则
+
+新增页面前必须检查是否已有可复用组件。
+
+优先复用：表格、卡片、抽屉、表单。
+
+---
+
+## 页面逻辑限制
+
+页面组件不得包含：
+- 复杂业务逻辑
+- 第三方平台调用
+
+必须通过 service / provider 处理。
+
+---
+
+## 复杂任务规则
+
+复杂任务必须先输出计划，包括：
+- 影响文件
+- 新增模块
+- 修改模块
+- 风险点
+
+确认后再执行。
+
+---
+
+## 完成后自检
+
+修改完成后必须检查：
+- 是否符合架构
+- 是否符合 UI 规范
+- 是否复用组件
+- 是否破坏模块边界
+
+---
+
+## API 返回格式
+
+所有 API 必须统一返回结构：
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {},
+  "meta": {
+    "requestId": "",
+    "timestamp": ""
+  }
+}
+```
+
+---
+
+## 资源接口风格
+
+所有资源使用 REST 风格，标准接口：
+- list
+- detail
+- create
+- update
+- delete
+- patchStatus
+
+---
+
+## Mock Service
+
+第一阶段所有接口使用 mock service，不要直接接真实 API。
+
+---
+
+## 事件命名
+
+统一事件命名：
+- tenant.created / user.created / project.created
+- workflow.created / task.created / task.started / task.failed
+- agent.created / skill.updated
+- terminal.connected / terminal.disconnected
+
+---
+
+## 审计日志
+
+所有关键操作必须预留 audit log，例如：
+- 创建租户
+- 删除项目
+- 修改权限
+- 更新 Agent
