@@ -1,0 +1,32 @@
+---
+description: 模型运行时切换规则，要求真实 LLM 主链路切换到服务端执行
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 模型运行时切换规则
+
+## 目标
+系统的真实 LLM 调用主链路必须从前端环境变量模式切换到服务端执行模式。
+
+## 核心原则
+
+### 1. 前端不得长期直接调用 OpenAI 作为正式主路径
+前端 llmExecutor 应调用后端 API，而不是直接读取 provider 配置和密钥发请求。
+
+### 2. Agent 模型解析必须通过服务端完成
+服务端应基于：
+- AgentLLMBinding
+- LLMModelConfig
+- LLMProvider
+- LLMCredential
+解析最终调用配置。
+
+### 3. 切换后不应再依赖 VITE_OPENAI_API_KEY 作为正式运行前提
+该环境变量最多仅可作为开发兼容路径，不得作为正式平台方案。
+
+## 禁止事项
+禁止：
+- 在 Planner / Worker 正式链路中继续以前端 env 变量作为唯一密钥来源
+- 在前端直接持有真实生产密钥

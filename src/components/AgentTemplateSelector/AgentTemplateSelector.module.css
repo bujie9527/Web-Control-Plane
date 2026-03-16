@@ -1,0 +1,40 @@
+.root {
+  width: 100%;
+}
+
+.select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.select:disabled {
+  background: #f1f3f4;
+  cursor: not-allowed;
+}
+
+.summary {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.summaryRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.summaryRow:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  color: #5f6368;
+  min-width: 72px;
+}

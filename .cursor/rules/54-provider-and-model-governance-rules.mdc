@@ -1,0 +1,46 @@
+---
+description: Provider 与模型治理规则，定义 Provider、ModelConfig 的状态、默认项与扩展方向
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Provider 与模型治理规则
+
+## 目标
+系统中的模型提供商与模型配置必须具备基础治理能力，支持启用、停用、默认项与未来扩展。
+
+## 核心原则
+
+### 1. Provider 与 ModelConfig 必须分层
+Provider 表示提供商。
+ModelConfig 表示具体模型配置。
+二者不得混为一个对象。
+
+### 2. ModelConfig 应支持默认模型与启用状态
+至少支持：
+- isEnabled
+- isDefault
+
+### 3. Provider 应支持启用与停用
+至少支持：
+- active
+- disabled
+
+### 4. 本阶段优先单 Provider 稳定链路
+虽然结构应支持多 Provider，但当前主目标仍然是先稳定 OpenAI 主链路。
+
+## 前台要求
+模型配置页需展示：
+- 提供商
+- 模型名称
+- modelKey
+- 默认模型
+- 启用状态
+- 适用 Agent 分类
+
+## 禁止事项
+禁止：
+- 在本阶段做复杂多 Provider 路由引擎
+- 混淆 Provider 配置与 Agent 绑定关系
+- 前台缺少中文状态与中文说明

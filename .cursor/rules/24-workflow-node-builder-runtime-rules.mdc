@@ -1,0 +1,100 @@
+---
+description: Workflow Node Builder 规则，定义节点编辑与约束机制
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Workflow Node Builder 规则
+
+## 目标
+Workflow Node Builder 是 Workflow Template Factory 的节点配置模块。
+
+该模块负责：
+
+- 创建节点
+- 删除节点
+- 调整节点顺序
+- 配置节点类型
+- 配置节点依赖
+- 绑定 Agent Template
+- 绑定 Skill 范围
+- 配置输入输出映射
+
+## 节点数量原则
+允许节点数量不受限制，但必须是结构化节点。
+
+每个节点必须具备：
+
+- executionType
+- intentType
+- orderIndex
+
+## 节点执行类型
+必须支持：
+
+- agent_task
+- human_review
+- approval_gate
+- result_writer
+
+预留：
+
+- system_task
+- manual_input
+- branch_decision
+
+## 节点意图类型
+节点意图用于约束可绑定的 Agent 和 Skill。
+
+系统应根据 intentType 自动过滤可选能力。
+
+## 节点依赖规则
+节点可以依赖多个前置节点。
+
+字段：
+
+dependsOnNodeIds
+
+首版执行规则：
+
+只有当前置节点完成后，节点才允许执行。
+
+## Agent 绑定规则
+节点不能绑定任意 Agent。
+
+必须通过：
+
+allowedAgentRoleTypes
+
+过滤 AgentTemplate。
+
+## Skill 绑定规则
+节点必须声明允许调用的 Skill 范围。
+
+字段：
+
+allowedSkillIds
+
+系统必须根据 AgentRoleType 与 intentType 自动过滤。
+
+## 输入输出映射规则
+每个节点可以声明：
+
+inputMapping
+outputMapping
+
+用于描述：
+
+- 节点输入来源
+- 节点输出写入位置
+
+首版允许使用 JSON 表达式，不需要复杂表达式编辑器。
+
+## 禁止事项
+禁止：
+
+- 节点绕过 AgentTemplate 直接执行 prompt
+- 节点绑定未授权 Skill
+- 节点绑定不匹配 roleType 的 Agent
+- 节点修改 Project 语义边界

@@ -1,0 +1,49 @@
+---
+description: 规划助手能力提升规则，定义 Planner 能力提升的标准路径
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 规划助手能力提升规则
+
+## 目标
+
+Planner Agent 的能力提升必须通过平台治理进行，不得视为 Agent 自发学习或无痕变化。
+
+## 标准提升路径
+
+### 1. Skill 升级
+
+通过增加或优化 Planning Skills 提升能力。
+
+### 2. Strategy 升级
+
+通过优化 Prompt、策略模板、领域偏好提升能力。
+
+### 3. Model 升级
+
+通过升级模型配置、fallback 模型、结构化输出能力提升能力。
+
+### 4. Validator / Guardrails 升级
+
+通过加强边界约束、校验逻辑、风险提示提升可靠性。
+
+### 5. Feedback 闭环升级
+
+通过用户修改行为、风险提示命中率、建议采纳率等反馈数据进行迭代。
+
+## 要求
+
+Planner Agent 的增强应尽量记录：
+
+- changeSummary
+- capabilityNotes
+- 当前版本增强点
+
+## 禁止事项
+
+禁止：
+
+- 将 Planner 能力变化描述为黑箱式自动进化
+- 在无版本说明的情况下静默改变 Planner 行为

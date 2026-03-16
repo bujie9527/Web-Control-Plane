@@ -1,0 +1,63 @@
+---
+description: 流程规划会话规则，定义 Planning Session、Draft、Message 与工作台边界
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 流程规划会话规则
+
+## 目标
+Workflow Planning Session 是流程共创阶段的核心对象，用于承载 SOP 输入、会话消息、草案版本与规划状态。
+
+它不是：
+- 普通聊天对话框
+- WorkflowTemplate 本体
+- WorkflowInstance 运行对象
+
+它是：
+- 流程规划会话容器
+- 草案版本容器
+- 用户与流程规划助手互动的结构化载体
+
+## 核心对象
+系统必须支持以下对象：
+
+1. WorkflowPlanningSession
+2. WorkflowPlanningDraft
+3. WorkflowPlanningMessage
+4. WorkflowPlanningDraftNode
+
+## 核心原则
+
+### 1. 会话、草案、模板、实例必须分层
+禁止混用以下对象：
+- WorkflowPlanningSession
+- WorkflowPlanningDraft
+- WorkflowTemplate
+- WorkflowInstance
+
+### 2. 每次流程修改必须形成草案版本
+禁止直接覆盖当前草案而不留版本。
+
+### 3. 消息不是附属 UI 内容，必须结构化存储
+每条用户消息、助手消息、系统提示都必须进入 WorkflowPlanningMessage。
+
+### 4. 草案节点必须尽量兼容 WorkflowTemplateNode 结构
+为后续 Draft → Template 转换预留接口。
+
+### 5. 本阶段重点是会话系统，不是 AI 自动规划能力
+本阶段允许使用 mock 助手回复，不要求接入真实 Planner Agent。
+
+## 页面要求
+流程规划工作台必须至少包含：
+- 左栏：规划上下文
+- 中栏：消息会话
+- 右栏：当前草案
+
+## 禁止事项
+禁止：
+- 把流程规划页做成纯聊天页
+- 把草案仅存在前端临时状态中
+- 让草案与正式模板共用同一对象
+- 在本阶段强行实现真实 LLM 规划

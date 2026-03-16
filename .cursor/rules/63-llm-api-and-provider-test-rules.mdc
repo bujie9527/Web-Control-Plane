@@ -1,0 +1,41 @@
+---
+description: LLM API 与 Provider 测试规则，要求执行 API 与测试连接走真实服务端链路
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# LLM API 与 Provider 测试规则
+
+## 目标
+LLM 执行与 Provider 测试连接必须通过服务端 API 实现，且返回中文可读结果。
+
+## 核心原则
+
+### 1. 必须提供统一执行 API
+建议：
+- POST /api/llm/execute
+
+### 2. 必须提供 Provider 测试 API
+建议：
+- POST /api/llm/test-provider
+
+### 3. 测试连接不得长期停留在 mock 成功
+Provider 测试应真实读取：
+- Provider
+- Credential
+- 基础模型能力
+
+### 4. 所有错误提示必须中文
+包括：
+- 凭证未配置
+- 提供商未启用
+- 模型配置不可用
+- 未授权
+- 请求超时
+- 接口不可达
+
+## 禁止事项
+禁止：
+- 页面点击测试连接却只返回固定 mock 成功
+- 执行 API 绕过 Binding / ModelConfig / Provider / Credential 解析链路

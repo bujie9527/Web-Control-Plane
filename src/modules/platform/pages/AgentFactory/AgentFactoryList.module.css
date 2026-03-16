@@ -1,0 +1,122 @@
+.detail {
+  padding: 8px 0;
+}
+
+.detailActions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  margin: 0;
+}
+
+.dl dt {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.dl dd {
+  margin: 0;
+}
+
+.loading {
+  margin: 0;
+  color: #5f6368;
+}
+
+.form {
+  padding: 8px 0;
+}
+
+.formError {
+  margin: 0 0 12px;
+  color: #d93025;
+  font-size: 14px;
+}
+
+.formRow {
+  margin-bottom: 16px;
+}
+
+.formRow label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.formRow input,
+.formRow select,
+.formRow textarea {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+}
+
+.formRow textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.formHint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #5f6368;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.statusTarget {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.copyHint {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.required {
+  color: #d93025;
+}
+
+.inheritSection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.inheritTitle {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.checkboxRow input {
+  width: auto;
+}

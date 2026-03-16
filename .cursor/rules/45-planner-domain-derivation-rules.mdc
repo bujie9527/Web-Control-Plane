@@ -1,0 +1,55 @@
+---
+description: 规划助手垂直派生规则，定义不同业务域 Planner 的差异化范围
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 规划助手垂直派生规则
+
+## 目标
+
+不同业务域的 Workflow Planner Agent 应通过受控派生形成，而不是简单改名或完全复制。
+
+## 建议垂直领域
+
+- general（通用）
+- social（社媒运营）
+- website（建站）
+- ai_employee（AI 员工）
+
+## 垂直差异可体现在
+
+- 默认 Prompt / Strategy
+- 推荐 Agent 池
+- 推荐 Skill 池
+- 推荐 DeliverableMode
+- 风险提示重点
+- 模板推荐偏好
+
+## 本阶段要求
+
+Phase 15.5 至少完成：
+
+- 基础版 Planner
+- 社媒运营 Planner
+- 建站 Planner
+- AI 员工 Planner
+
+其中至少一个垂直 Planner 需要有更明确的配置差异，建议优先社媒运营。
+
+## 前台要求
+
+前台必须用中文展示垂直领域：
+
+- 通用
+- 社媒运营
+- 建站
+- AI 员工
+
+## 禁止事项
+
+禁止：
+
+- 只改中文名称而没有策略差异
+- 垂直 Planner 与基础 Planner 没有任何结构化区别

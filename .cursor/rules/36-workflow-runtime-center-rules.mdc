@@ -1,0 +1,61 @@
+---
+description: 流程运行中心规则，定义 WorkflowInstance、运行态节点与运行中心页面边界
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 流程运行中心规则
+
+## 目标
+Workflow Runtime Center 用于展示和管理流程实例的运行状态、节点进度、执行摘要、错误信息和人工介入入口。
+
+它不是：
+- 流程模板工厂
+- 流程规划工作台
+- Execution Supervisor Agent 本体
+
+它是：
+- 流程运行可视化中心
+- WorkflowInstance 的主查看入口
+- 后续接入 Supervisor 的承载面
+
+## 核心原则
+
+### 1. Runtime Center 面向 WorkflowInstance，不面向 WorkflowTemplate
+模板与实例必须继续分层。
+
+### 2. Runtime Center 必须可视化节点运行状态
+每个实例必须可看到节点列表与节点状态。
+
+### 3. 节点状态必须结构化
+至少支持：
+- pending
+- running
+- waiting_review
+- completed
+- failed
+- skipped（预留）
+
+前台必须使用中文映射。
+
+### 4. Runtime Center 必须展示节点执行摘要
+至少展示：
+- selectedAgentTemplateId
+- selectedSkillIds 摘要
+- resultSummary
+- errorSummary
+- reviewSummary
+
+### 5. Runtime Center 必须为人工介入预留入口
+即使本阶段不深做 Supervisor，也应预留：
+- 重试
+- 暂停
+- 继续
+- 标记通过
+
+## 禁止事项
+禁止：
+- 将 Runtime Center 与 Template 编辑页混在一起
+- 用 WorkflowTemplate 数据冒充 WorkflowInstance 运行数据
+- 在本阶段直接做复杂自愈逻辑

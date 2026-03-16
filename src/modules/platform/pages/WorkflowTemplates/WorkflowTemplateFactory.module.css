@@ -1,0 +1,92 @@
+.loading {
+  margin: 0;
+  color: #5f6368;
+}
+
+.formRow {
+  margin-bottom: 12px;
+}
+
+.formRow label {
+  display: block;
+  margin-bottom: 6px;
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.formRow input,
+.formRow select,
+.formRow textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.formRow textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.formError {
+  margin: 0;
+  color: #d93025;
+  font-size: 13px;
+}
+
+.copyHint {
+  margin: 0 0 12px;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+}
+
+.kvGrid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 8px 16px;
+  align-items: start;
+}
+
+.kvLabel {
+  color: #5f6368;
+}
+
+.nodeList {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.sectionHint {
+  margin: 0;
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.backLink {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.headerBar {
+  margin-bottom: 12px;
+}
+
+.versionHint {
+  margin: 0;
+  color: #b36b00;
+  font-size: 14px;
+  background: #fef7e0;
+  padding: 12px;
+  border-radius: 4px;
+}

@@ -1,0 +1,69 @@
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metricValue {
+  font-size: 28px;
+  font-weight: 600;
+  color: #202124;
+}
+
+.metricDesc {
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.metricLabel {
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.alertList,
+.activityList {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.alertList li,
+.activityList li {
+  margin-bottom: 8px;
+}
+
+.activityList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.activityMsg {
+  color: #202124;
+}
+
+.activityTime {
+  color: #5f6368;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.emptyHint {
+  margin: 0;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.loading {
+  margin: 0;
+  color: #5f6368;
+  font-size: 14px;
+  padding: 24px 0;
+}

@@ -1,0 +1,116 @@
+.dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.dl dt {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.dl dd {
+  margin: 0;
+  color: #3c4043;
+}
+
+.empty {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.credBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.masked {
+  margin: 0;
+  font-size: 14px;
+  color: #5f6368;
+  letter-spacing: 2px;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.list, .logList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.listItem, .logItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8eaed;
+  font-size: 14px;
+}
+
+.listItem:last-child, .logItem:last-child {
+  border-bottom: none;
+}
+
+.listName, .logAction {
+  font-weight: 500;
+  color: #202124;
+  min-width: 120px;
+}
+
+.listMeta, .logTime {
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.logTerminal {
+  min-width: 100px;
+  color: #3c4043;
+}
+
+.logResult {
+  color: #1e8e3e;
+}
+
+.identityBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loading {
+  margin: 0;
+  padding: 16px 0;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.testSuccess {
+  color: #1e8e3e;
+  font-size: 14px;
+}
+
+.testFailed {
+  color: #c5221f;
+  font-size: 14px;
+}

@@ -1,0 +1,40 @@
+---
+description: 模型配置中心规则，定义 LLM Provider、Model Config 与系统级管理边界
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 模型配置中心规则
+
+## 目标
+LLM Configuration Center 是系统级模型治理模块，用于管理模型提供商、模型配置与 Agent 模型绑定关系。
+
+它不是：
+- 页面级临时设置
+- 某个单独 Agent 的本地配置
+- 写死在 adapter 中的常量配置
+
+它是：
+- Control Plane 中的模型治理中心
+- LLM Provider、Model Config、Agent Binding 的统一管理入口
+
+## 核心原则
+
+### 1. 模型配置不得长期写死在代码常量中
+Phase 17.5 之后，Planner / Worker 的模型选择应通过绑定关系读取，而非继续写死 modelConfigId。
+
+### 2. 模型配置必须系统级集中管理
+至少支持：
+- Provider 管理
+- Model Config 管理
+- Agent 模型绑定管理
+
+### 3. 前台必须中文展示
+模型配置中心前台必须使用中文标题、中文字段、中文状态。
+
+## 禁止事项
+禁止：
+- 在新增 Agent 时继续写死 modelConfigId
+- 将模型配置散落在多个页面和 adapter 中
+- 前台直接显示英文原始枚举而无中文映射

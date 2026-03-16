@@ -1,0 +1,112 @@
+---
+description: Workflow 节点构建规则，定义节点类型、约束、绑定与输入输出映射
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Workflow 节点构建规则
+
+## 目标
+Workflow Template 不是只有流程头信息的模板对象，必须由一组结构化 Workflow Template Node 组成。
+
+节点数量可以不受限制，但节点结构不能无约束。
+
+## 核心原则
+
+### 1. 支持无限数量节点，但必须是结构化节点
+允许：
+- 新增节点
+- 删除节点
+- 调整顺序
+- 调整依赖关系
+
+不允许：
+- 非结构化自由文本节点
+- 没有类型约束的节点
+- 没有执行边界的节点
+
+### 2. 节点类型不等于 Agent 类型
+节点定义“做什么类型的工作”。
+Agent 定义“由谁来做”。
+Skill 定义“具体用什么能力做”。
+Executor 定义“如何执行”。
+
+四者必须分层建模。
+
+## 节点结构建议
+
+每个 Workflow Template Node 必须至少支持：
+
+### 基础身份
+- id
+- workflowTemplateId
+- key
+- name
+- description
+
+### 节点类型
+- executionType
+  - agent_task
+  - human_review
+  - approval_gate
+  - result_writer
+  - system_task（预留）
+  - manual_input（预留）
+  - branch_decision（预留）
+
+### 节点意图类型
+- intentType
+  - create
+  - review
+  - search
+  - research
+  - publish
+  - record
+  - analyze
+  - summarize
+  - classify
+  - reply
+
+### 执行顺序与依赖
+- orderIndex
+- dependsOnNodeIds
+
+### 能力绑定约束
+- recommendedAgentTemplateId
+- allowedAgentRoleTypes
+- allowedSkillIds
+
+### 输入输出映射
+- inputMapping
+- outputMapping
+
+### 执行策略
+- executorStrategy
+- reviewPolicy
+
+### 运行控制
+- isOptional
+- onFailureStrategy
+- status
+
+## 节点约束原则
+必须支持：
+- 顺序执行
+- 前置依赖
+- 审核前后切换
+- 可选节点
+- 失败策略
+
+首版可不做复杂分支执行，但必须预留 branch_decision 节点类型与依赖字段。
+
+## 节点绑定边界
+禁止：
+- 节点直接绑定自由 Prompt 代替 Agent/Skill
+- 节点绕过模板边界访问终端
+- 节点不经过约束直接选择任意 Agent
+- 节点不经过约束直接选择任意 Skill
+
+## 结果要求
+Workflow Template 必须能承载完整节点集合，而不是只有流程头部描述。
+后续节点构建器 UI、SOP 规划器和运行态中心都必须复用该结构。

@@ -1,0 +1,89 @@
+---
+alwaysApply: true
+---
+
+# Project Domain Model Rules
+
+## 模块定位
+
+Project 在本系统中不是普通管理对象，而是业务执行容器。
+
+Project 必须具备以下核心业务含义：
+
+- 明确目标（Goal）
+- 明确交付标的（Deliverable）
+- 明确资源配置（Resources）
+- 明确身份配置（Identities）
+- 明确终端配置（Terminals）
+- 明确 SOP（自然语言操作流程）
+- 为 Workflow / Task 执行提供上下文
+
+---
+
+## 当前阶段目标
+
+当前阶段需要把 Project 正式升级为领域核心对象。
+
+必须引入以下标准子对象：
+
+1. ProjectGoal
+2. ProjectDeliverable
+3. ProjectResourceConfig
+4. ProjectSOP
+
+这些对象必须作为显式结构存在，不能只作为自由文本散落在页面中。
+
+---
+
+## 非目标
+
+当前阶段不做：
+
+- 复杂自动执行
+- 复杂流程引擎
+- 复杂拖拽式流程设计器
+- SOP 智能编排引擎的完整实现
+
+当前阶段重点是：
+
+先完成对象模型与页面承载结构。
+
+---
+
+## 对象原则
+
+### Goal
+Goal 用于定义项目目标，必须具备稳定性和约束性。
+目标确认后不应轻易漂移。
+
+### Deliverable
+Deliverable 用于定义项目交付标的，是项目可验收的输出要求。
+
+### Resources
+Resources 用于定义项目可使用的资源，如：
+- Identity
+- Terminal
+- Server
+- API
+- AgentTeam
+
+### SOP
+SOP 必须分为：
+- sopRaw（人工自然语言输入）
+- sopParsed（结构化解析结果，占位即可）
+
+---
+
+## 页面原则
+
+项目详情页必须成为这些对象的主要工作台。
+
+不得把 Goal / Deliverable / Resources / SOP 降级为零散表单字段。
+
+---
+
+## 开发原则
+
+- 先建立 schema / mock / service / 页面结构
+- 先体现业务关系，再考虑复杂逻辑
+- 保持与 Identity、Task、Terminal 的关系兼容

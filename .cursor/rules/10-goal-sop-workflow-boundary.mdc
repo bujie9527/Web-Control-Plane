@@ -1,0 +1,93 @@
+---
+alwaysApply: true
+---
+
+# Goal / SOP / Workflow Boundary Rules
+
+## 边界定义
+
+在本系统中，Goal、SOP、Workflow 不是同一个概念，必须严格区分。
+
+---
+
+## Goal
+
+Goal 回答：
+
+“这个项目为什么存在，要达成什么结果？”
+
+Goal 是业务目标，不是执行步骤。
+
+示例：
+- 运营社交媒体账号
+- 提升网站 SEO / GEO
+- 获取潜在客户加入私域
+
+---
+
+## Deliverable
+
+Deliverable 回答：
+
+“这个项目具体交付什么？”
+
+示例：
+- 每天更新内容
+- 新增潜在客户
+- 网站页面更新
+- 数据提升
+
+---
+
+## SOP
+
+SOP 回答：
+
+“这件事如何做？”
+
+SOP 由人工输入自然语言描述，可被 AI 解析，但其本质是项目级操作方案。
+
+SOP 不是流程模板，也不是任务实例。
+
+---
+
+## Workflow Template
+
+Workflow Template 回答：
+
+“系统预设有哪些标准流程可选？”
+
+它是结构化模板，不等于项目的 Goal 或 SOP。
+
+---
+
+## Workflow Instance
+
+Workflow Instance 回答：
+
+“当前项目这次具体怎么执行？”
+
+它可以来源于：
+- 选中的流程模板
+- 项目 Goal
+- 项目 SOP
+- 使用的 Identity
+
+---
+
+## 开发原则
+
+- 不得把 Goal 直接写成 Workflow
+- 不得把 SOP 直接等同于 Task
+- 不得把 Workflow Template 和 Workflow Instance 混用
+- Identity 应属于项目上下文或流程实例上下文，而不是 Goal 本身
+
+---
+
+## 当前阶段要求
+
+当前阶段重点是：
+
+1. 建立 Goal / Deliverable / Resources / SOP 的对象模型
+2. 在项目详情页承载这些模块
+3. 为后续 Workflow & Task Execution 留好结构位

@@ -1,0 +1,50 @@
+---
+description: Draft 转换为 WorkflowTemplate 的规则
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Draft → Template 转换规则
+
+## 目标
+
+WorkflowPlanningDraft 是流程规划阶段的对象。
+
+WorkflowTemplate 是流程资产对象。
+
+必须通过转换流程生成 Template。
+
+禁止直接将 Draft 作为 Template 使用。
+
+## 转换原则
+
+DraftNode 必须转换为 WorkflowTemplateNode。
+
+TemplateNode 必须具备以下字段：
+
+- key
+- name
+- executionType
+- intentType
+- orderIndex
+- dependsOnNodeIds
+- recommendedAgentTemplateId
+- allowedSkillIds
+- executorStrategy
+
+## 来源追踪
+
+所有 Template 必须记录：
+
+- sourcePlanningSessionId
+- sourcePlanningDraftId
+- sourceDraftVersion
+
+## 禁止事项
+
+禁止：
+
+- Draft 与 Template 共用同一对象
+- 发布 Template 时丢失来源信息
+- 跳过 Validator 发布模板

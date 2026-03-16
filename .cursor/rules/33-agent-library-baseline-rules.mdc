@@ -1,0 +1,51 @@
+---
+description: Agent 资产库基线规则，要求 Agent 库展示真实系统资产而非占位内容
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Agent 资产库基线规则
+
+## 目标
+Agent Library 必须展示真实可用的 AgentTemplate 资产，而不是仅展示占位示例内容。
+
+## 核心要求
+
+### 1. Agent 库必须反映系统当前真实 Agent 资产
+至少应包含：
+- 流程规划助手
+- 内容生成 Agent
+- 内容审核 Agent
+- 发布 Agent
+- 结果记录 Agent
+- 研究/搜索 Agent（如已存在）
+- 执行监督 Agent（可预留占位，但需明确分类）
+
+### 2. Agent 必须具备中文展示
+前台必须展示：
+- 中文名称
+- 中文分类
+- 中文角色说明
+- 中文用途说明
+
+### 3. Agent 详情页必须可见关系信息
+至少展示：
+- 绑定的 Skill
+- 适用项目类型
+- 被哪些 WorkflowTemplateNode 引用
+- 被哪些 WorkflowPlanningDraftNode 推荐
+
+### 4. Agent 分类必须清晰
+建议 category 至少包括：
+- planning
+- execution
+- coordination
+
+前台必须映射为中文。
+
+## 禁止事项
+禁止：
+- Agent 库长期保留仅占位示例
+- 前台直接显示未经处理的英文枚举
+- Agent 详情页缺少用途与引用关系说明

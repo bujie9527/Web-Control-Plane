@@ -1,0 +1,100 @@
+---
+description: Workflow Planner Agent 规则，定义流程规划助手、规划技能与草案修订边界
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Workflow Planner Agent 规则
+
+## 目标
+Workflow Planner Agent 是流程规划域中的规划型 Agent，用于基于 SOP、项目边界和用户反馈生成与修订流程草案。
+
+它不是：
+- 普通聊天助手
+- 运行期执行 Agent
+- WorkflowTemplate 本体
+- WorkflowInstance 监督器
+
+它是：
+- 流程规划助手
+- 草案生成与修订 Agent
+- Planning Session 的核心智能执行体
+
+## 核心原则
+
+### 1. Planner Agent 必须作为独立类型 Agent 建模
+Planner Agent 必须属于 Agent 体系中的 planning 类，而不是页面中的硬编码逻辑。
+
+建议：
+- category = planning
+- roleType = planner
+
+### 2. Planner Agent 只能在系统约束内生成草案
+禁止 Planner Agent：
+- 发明系统中不存在的节点类型
+- 发明不存在的 AgentTemplate
+- 发明不存在的 Skill
+- 改写项目不可变目标边界
+- 改写交付模式边界
+
+### 3. Planner Agent 的输出必须是结构化草案
+Planner Agent 的主要输出不是自由文本，而是：
+- WorkflowPlanningDraft
+- changeSummary
+- riskNotes
+- suggestedAgentTemplateIds
+- suggestedSkillIds
+
+### 4. Planner Agent 必须通过 Planning Skills 工作
+禁止将全部逻辑写成单一长 prompt。
+必须通过规划类 Skill 组织主要能力。
+
+## 必须支持的规划技能
+至少支持以下技能：
+- ParseSOPToStructuredSteps
+- GenerateWorkflowDraft
+- ReviseWorkflowDraft
+- SummarizeWorkflowChanges
+- SuggestNodeAgentBindings
+
+## 输入要求
+Planner Agent 的输入至少包括：
+- WorkflowPlanningSession
+- sourceText / SOP 原文
+- projectTypeId
+- goalTypeId
+- deliverableMode
+- 当前 Draft（如存在）
+- 最新用户消息
+- 当前系统可用 AgentTemplate 列表
+- 当前系统可用 Skill 列表
+
+## 输出要求
+Planner Agent 输出必须尽量结构化，至少包括：
+- nodes
+- changeSummary
+- riskNotes
+- suggestedAgentTemplateIds
+- suggestedSkillIds
+
+## 页面交互要求
+流程规划工作台必须支持：
+- 生成初稿
+- 根据用户消息修订草案
+- 显示 Planner 回复
+- 显示变更摘要
+- 显示风险提示
+
+## 执行器要求
+Phase 11 中：
+- Planner Agent 默认以 LLM 路径为主
+- 可使用 mock 或 mock+半真实实现
+- 不以 OpenClaw 作为首版主路径
+
+## 禁止事项
+禁止：
+- 将 Planner Agent 与 Execution Supervisor Agent 合并
+- 在本阶段直接自动发布模板
+- 跳过 Draft 直接修改 WorkflowTemplate
+- 输出仅为一段自然语言说明而无结构化结果

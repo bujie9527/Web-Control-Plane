@@ -1,0 +1,92 @@
+---
+alwaysApply: true
+---
+
+# API Contracts Rules
+
+## 返回格式
+
+所有 API 必须统一返回结构：
+
+```
+{
+  code,
+  message,
+  data,
+  meta
+}
+```
+
+示例：
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {},
+  "meta": {
+    "requestId": "",
+    "timestamp": ""
+  }
+}
+```
+
+---
+
+## 资源接口风格
+
+所有资源使用：
+
+REST 风格。
+
+标准接口：
+
+- list
+- detail
+- create
+- update
+- delete
+- patchStatus
+
+---
+
+## mock service
+
+第一阶段所有接口：
+
+使用 mock service。
+
+不要直接接真实 API。
+
+---
+
+## 事件命名
+
+统一事件：
+
+- tenant.created
+- user.created
+- project.created
+- workflow.created
+- task.created
+- task.started
+- task.failed
+- agent.created
+- skill.updated
+- terminal.connected
+- terminal.disconnected
+
+---
+
+## 审计日志
+
+所有关键操作必须预留：
+
+audit log。
+
+例如：
+
+- 创建租户
+- 删除项目
+- 修改权限
+- 更新 Agent

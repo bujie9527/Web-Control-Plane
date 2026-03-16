@@ -1,0 +1,321 @@
+.toolbar {
+  margin-bottom: 16px;
+}
+
+.btnRequest {
+  padding: 8px 16px;
+  font-size: 14px;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnRequest:hover {
+  background: #059669;
+}
+
+.requestForm h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.requestForm .formRow {
+  margin-bottom: 12px;
+}
+
+.requestForm .formRow label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.requestForm .formRow input,
+.requestForm .formRow select,
+.requestForm .formRow textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.requestForm .formActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.requestForm .formActions button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.requestForm .formActions button[type='submit'] {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+}
+
+.requestForm .formActions button[type='button'] {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  padding: 16px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cardDesc {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.metaLabel {
+  color: #9ca3af;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  padding: 2px 8px;
+  font-size: 12px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  color: #374151;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btnDetail {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnDetail:hover {
+  background: #2563eb;
+}
+
+.btnEnable {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnDisable {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: #6b7280;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.loading,
+.error,
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.error {
+  color: #dc2626;
+}
+
+/* Detail */
+.backBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.breadcrumb {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.summaryBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summaryMeta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.tab,
+.tabActive {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tabActive {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.tabContent {
+  margin-top: 0;
+}
+
+.infoTab .dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+}
+
+.infoTab dt {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.infoTab dd {
+  margin: 0;
+}
+
+.configFields {
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.configFields li {
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* 凭证配置表单（Facebook 等） */
+.credentialForm {
+  max-width: 480px;
+}
+.credentialForm .formRow {
+  margin-bottom: 14px;
+}
+.credentialForm .label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+.credentialForm .input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+.credentialForm .input:read-only {
+  background: #f9fafb;
+  color: #6b7280;
+}
+.primaryBtn {
+  padding: 8px 16px;
+  font-size: 14px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.primaryBtn:hover:not(:disabled) {
+  background: #2563eb;
+}
+.primaryBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.formActions {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "social_media_operation",
+    "code": "social_media_operation",
+    "name": "自媒体内容运营",
+    "description": "管理社媒账号，持续发布内容，提升账号活跃度与影响力",
+    "allowedGoalTypeCodes": ["brand_awareness", "engagement_growth", "follower_growth"],
+    "allowedDeliverableModes": ["content", "follower"],
+    "icon": "📱"
+  },
+  {
+    "id": "account_matrix",
+    "code": "account_matrix",
+    "name": "账号矩阵管理",
+    "description": "管理多个账号形成矩阵，统一风格与调性，放大传播效果",
+    "allowedGoalTypeCodes": ["brand_awareness", "follower_growth", "lead_generation"],
+    "allowedDeliverableModes": ["content", "follower"],
+    "icon": "🔲"
+  },
+  {
+    "id": "website_operation",
+    "code": "website_operation",
+    "name": "网站运营与 SEO",
+    "description": "持续更新网站内容，优化 SEO/GEO，提升搜索流量与转化",
+    "allowedGoalTypeCodes": ["seo_growth", "traffic_growth", "conversion"],
+    "allowedDeliverableModes": ["website_update"],
+    "icon": "🌐"
+  },
+  {
+    "id": "lead_generation",
+    "code": "lead_generation",
+    "name": "线索获客",
+    "description": "通过私域运营、内容营销等方式获取并沉淀潜在客户",
+    "allowedGoalTypeCodes": ["lead_generation", "conversion"],
+    "allowedDeliverableModes": ["lead"],
+    "icon": "🎯"
+  }
+]

@@ -1,0 +1,147 @@
+---
+alwaysApply: true
+---
+
+# Core Architecture Rules
+# AI Work Control Center
+
+## 系统定位
+
+本项目是一个企业级 **AI Work Control Center（AI 工作中控后台）**。
+
+**一句话定位：** 以项目为驱动、以垂直能力 Agent 为执行单元、以身份（Identity）定义内容视角、以终端为操作入口的 AI 运营控制平面。
+
+目标是让企业可以用 AI 团队，持续运营多个平台账号和网站，以不同的身份视角产出差异化内容，并产出可向上汇报的业务结果。
+
+完整系统使命见：`docs/architecture/00-system-mission.md`
+
+---
+
+## 核心概念定义（严禁混用）
+
+### Identity（身份）
+**属于项目层，定义内容创作的视角与立场。不是 Agent 的属性。**
+
+Identity 决定"内容以谁的口吻和立场产出"。同一条新闻，由「日本经济学家身份」产出的评论与由「美国经济学家身份」产出的完全不同——这就是 Identity 的价值。
+
+- Identity 在项目中配置，可跨项目复用
+- 每个 Identity 绑定一组终端（对应该身份的平台账号）
+- Identity 是租户的长期核心资产
+
+### Agent（智能体）
+**垂直能力的 AI 执行单元，按领域/平台划分，不承载人格。**
+
+```
+Agent = LLM（理解与生成能力）+ Skills（领域操作最短路径）
+```
+
+- Agent 执行任务时，接收项目的 Identity 信息作为内容视角输入
+- Agent 只决定"我有什么能力"，Identity 决定"内容从什么角度产出"
+- 多个 Agent 在流程节点中协同，各司其职
+
+### Skills（技能）
+**完成特定任务的最短路径，是 Agent 的行动指令库。**
+
+Skills 是人类经验的结构化沉淀，让 AI 不需要每次摸索，直接按验证过的流程执行。
+
+- Skills 与 OpenClaw 格式兼容，可直接从 OpenClaw 生态复用
+- Skills 描述操作步骤，不描述内容视角（那是 Identity 的职责）
+
+### Terminal（终端）
+**Agent 操作真实世界的入口。系统能做什么，由已接入的终端决定。**
+
+- 每个终端绑定到项目的一个 Identity 下
+- Agent 只能操作已配置并授权的终端
+
+---
+
+## 核心执行链路
+
+```
+项目（Project）
+  ├── 目标（Goal）+ 交付标准（Deliverable）
+  ├── 身份（Identity）× N → 绑定终端（Terminal）
+  ├── SOP → [Planner Agent] → WorkflowTemplate → WorkflowInstance
+  │           └── WorkflowNode → Agent（LLM + Skills）
+  └── Result → Report（可汇报）
+```
+
+---
+
+## 七条核心设计原则（开发红线，不得违背）
+
+### 原则 1：项目是一切执行的起点
+所有工作流、Agent 分配、身份配置、终端操作，都必须归属于一个项目。
+
+### 原则 2：项目类型决定配置包
+项目类型绑定目标类型、推荐流程模板、推荐 Agent 组合。新增业务场景以新增项目类型方式扩展，不修改已有类型逻辑。
+
+### 原则 3：Identity 属于项目层，不是 Agent 的属性
+Identity 决定内容视角，Agent 决定执行能力，两者严格分离，不得混用。
+
+### 原则 4：Agent 能力来自 LLM + Skills，Skills 与 OpenClaw 格式兼容
+Agent 的竞争力在于 Skills 库质量。Skills 可从 OpenClaw 生态快速复用，不从零构建。
+
+### 原则 5：终端是执行边界，系统能力由终端决定
+系统能做什么取决于接入了哪些终端，不硬编码业务能力。
+
+### 原则 6：SOP → Workflow 转换是核心 AI 价值点
+SOP（人写的自然语言规范）必须经 Planner Agent 解析为 WorkflowTemplate，这条转换链不可绕过。
+
+### 原则 7：结果必须可向上汇报
+项目执行结果需产出汇报视图（交付物完成情况、目标达成指标、各身份/账号产出数据）。
+
+---
+
+## 当前阶段开发目标
+
+第一阶段必须优先完成：
+
+1. 登录与身份入口
+2. 平台后台与租户后台双控制台（+ System Console）
+3. 多租户模型
+4. RBAC 权限体系
+5. 后台 Layout 与菜单结构
+6. 页面骨架
+7. 模块目录规范
+8. mock service
+9. API 返回结构
+10. 事件与审计接口预留
+
+---
+
+## 第一阶段禁止行为
+
+在当前阶段，不允许：
+
+- 接入真实 Facebook / X / TikTok
+- 接入 OpenClaw
+- 实现真实任务执行
+- 编写复杂自动化逻辑
+- 实现复杂流程拖拽
+- 在页面组件中编写复杂业务逻辑
+
+---
+
+## 架构原则
+
+### 控制平面优先
+
+先完成：管理结构、UI结构、模块边界、接口规范，再接入执行逻辑。
+
+### mock-first
+
+所有数据先使用 mock service / seed data，不要提前接入真实 API。
+
+### 模块解耦
+
+页面层不得直接依赖：第三方平台、runtime 执行逻辑、workflow engine。
+必须通过 service / provider / adapter。
+
+### 分层结构
+
+必须保持：page → service → repository → schema 分层。
+
+### 可扩展性
+
+任何模块设计时必须考虑未来可扩展：Agent runtime、Workflow engine、Skills execution、Terminal connectors。

@@ -1,0 +1,44 @@
+.kvList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  font-size: 14px;
+  color: #202124;
+}
+
+.simpleList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.simpleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #202124;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.simpleRow:last-child {
+  border-bottom: none;
+}
+
+.simpleRow .desc {
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.identityTag {
+  margin-left: auto;
+  font-size: 12px;
+  color: #5f6368;
+}
+
+.placeholder {
+  margin: 0;
+  color: #5f6368;
+  font-size: 14px;
+}

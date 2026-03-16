@@ -1,0 +1,72 @@
+---
+description: 流程规划校验器规则，定义 Draft 校验职责与边界
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 流程规划校验器规则
+
+## 目标
+Planning Validator 用于对 WorkflowPlanningDraft 做结构与边界校验，确保 Planner Agent 生成的草案不越界、不失真、可转化。
+
+## 核心原则
+
+### 1. Validator 与 Planner 必须分离
+Planner 负责生成草案。
+Validator 负责验证草案是否符合系统约束。
+禁止将校验逻辑完全混入 Planner prompt 中。
+
+### 2. Validator 必须面向结构化 Draft 工作
+Validator 的输入应为 WorkflowPlanningDraft 或等效结构对象，而不是仅校验自然语言描述。
+
+## 最低校验范围
+至少校验以下内容：
+
+### 节点结构校验
+- 节点是否存在
+- key 是否重复
+- orderIndex 是否有效
+- dependsOnNodeIds 是否引用有效节点
+
+### 节点类型校验
+- executionType 是否在允许范围内
+- intentType 是否在允许范围内
+
+### Agent / Skill 校验
+- recommendedAgentTemplateId 是否存在
+- allowedAgentRoleTypes 是否合法
+- allowedSkillIds 是否存在
+
+### 项目边界校验
+- 是否越过 supportedProjectTypeId
+- 是否越过 supportedGoalTypeIds
+- 是否越过 supportedDeliverableModes
+
+### 草案可转化性校验
+- DraftNode 是否具备转换为 WorkflowTemplateNode 所需的基础字段
+- 节点顺序与依赖关系是否可用于模板生成
+
+## 输出要求
+Validator 输出不得只返回 true / false。
+必须提供结构化结果，例如：
+- isValid
+- errors
+- warnings
+- normalizedSummary
+
+前台展示必须有中文说明。
+
+## 前台中文要求
+校验结果应以中文展示，例如：
+- 草案校验通过
+- 存在无效节点类型
+- 存在无效的 Agent 绑定
+- 节点依赖配置异常
+- 草案超出项目边界约束
+
+## 禁止事项
+禁止：
+- 跳过 Validator 直接采用 Planner 生成结果
+- 仅靠页面层做零散字段判断代替统一 Validator
+- 输出英文原始错误而不做中文映射

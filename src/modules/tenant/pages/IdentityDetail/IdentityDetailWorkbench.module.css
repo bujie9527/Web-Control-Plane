@@ -1,0 +1,96 @@
+.backBar {
+  margin-bottom: 12px;
+}
+
+.backLink {
+  font-size: 14px;
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e8eaed;
+  border-radius: 8px;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #202124;
+}
+
+.summaryLabel {
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 200px;
+}
+
+.loading {
+  margin: 0;
+  color: #5f6368;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+.kvGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  align-items: baseline;
+  font-size: 14px;
+  color: #202124;
+}
+
+.kvLabel {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.textBlock {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #202124;
+  white-space: pre-wrap;
+}
+
+.platformList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.platformList li {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.platformList .platformKey {
+  color: #5f6368;
+  margin-right: 8px;
+}
+
+.placeholderHint {
+  margin: 0;
+  font-size: 13px;
+  color: #5f6368;
+}

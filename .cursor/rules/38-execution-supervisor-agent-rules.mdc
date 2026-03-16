@@ -1,0 +1,87 @@
+---
+description: 执行监督 Agent 规则，定义 Supervisor Agent 的职责、边界与分类
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 执行监督 Agent 规则
+
+## 目标
+
+Execution Supervisor Agent 是运行协调层中的监督型 Agent，用于在 WorkflowInstance 运行过程中分析节点状态、错误与卡点，并生成结构化监督建议。
+
+它不是：
+
+- 普通执行 Agent
+- 流程规划 Agent
+- Runtime 页面中的硬编码逻辑
+- 自动自愈引擎本体
+
+它是：
+
+- 运行期协调 Agent
+- 错误与卡点分析 Agent
+- Runtime Center 与未来自愈机制之间的桥梁
+
+## 核心原则
+
+### 1. Supervisor Agent 必须作为独立类型 Agent 建模
+
+建议：
+
+- category = coordination
+- roleType = supervisor
+
+前台必须使用中文名称：
+
+- 执行监督助手
+
+### 2. Supervisor Agent 不直接执行业务节点
+
+Supervisor 负责「分析与建议」，不负责直接替代 Worker Agent 执行节点。
+
+### 3. Supervisor 输出必须结构化
+
+Supervisor 主要输出必须是：
+
+- WorkflowSupervisorDecision
+- reason
+- suggestedNextAction
+- relatedErrorSummary
+
+### 4. Supervisor 不得与 Planner Agent 合并
+
+Planner 负责流程规划。
+Supervisor 负责运行监督。
+二者必须严格分离。
+
+## 建议支持的决策类型
+
+至少支持：
+
+- retry
+- skip
+- manual_review
+- pause_workflow
+- continue_workflow
+- abort_workflow
+- no_action
+
+前台必须有中文映射。
+
+## 执行器要求
+
+Phase 14 中：
+
+- Supervisor Agent 先使用 mock / rule-based 分析
+- 不要求真实 LLM
+- 不要求 OpenClaw
+
+## 禁止事项
+
+禁止：
+
+- 在 Phase 14 直接实现复杂自动恢复
+- 让 Supervisor 无人工确认直接自治改写流程
+- 将 Supervisor 决策逻辑写死在页面层

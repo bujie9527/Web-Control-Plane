@@ -1,0 +1,41 @@
+---
+description: 控制平面生命周期规则，定义核心对象的状态与操作
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 控制平面生命周期规则
+
+## 目标
+核心控制平面对象必须支持完整的生命周期管理，便于运营与治理。
+
+## 核心原则
+
+### 1. 核心对象必须支持
+- 创建（create）
+- 编辑（update）
+- 停用（disable）
+- 归档（archive）
+- 安全删除（safeDelete）
+
+### 2. 对象与状态
+| 对象 | status 可选值 |
+|------|---------------|
+| WorkflowTemplate | draft \| active \| archived |
+| WorkflowPlanningSession | draft \| active \| abandoned \| archived |
+| Project | active \| archived |
+| AgentTemplate | active \| disabled \| archived |
+| LLMModelConfig | 通过 isEnabled 表示停用 |
+
+### 3. 操作语义
+- **停用**：对象仍存在，但不可用于新建/执行
+- **归档**：对象进入历史态，不再参与常规列表
+- **删除**：仅允许在无引用时执行
+
+## 列表 UI 要求
+所有核心列表必须包含操作列：
+- 编辑
+- 停用
+- 归档
+- 删除（需引用检查 + 中文确认）

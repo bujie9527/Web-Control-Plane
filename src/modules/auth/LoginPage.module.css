@@ -1,0 +1,145 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1d24 0%, #252830 100%);
+}
+
+.card {
+  width: 400px;
+  padding: 40px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #202124;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #5f6368;
+  margin: 0 0 28px 0;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.select {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.input {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.error {
+  font-size: 13px;
+  color: #dc2626;
+  margin: 0;
+}
+
+.btn {
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: #1a1d24;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #252830;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* 快速登录（演示账号） */
+.quickSelect {
+  margin-bottom: 20px;
+}
+
+.quickLabel {
+  font-size: 13px;
+  color: #5f6368;
+  margin: 0 0 8px 0;
+}
+
+.quickBtns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quickBtn {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #1a1d24;
+  background: #f1f3f4;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quickBtn:hover {
+  background: #e8eaed;
+  border-color: #3b82f6;
+}
+
+.quickBtnRole {
+  margin-left: 4px;
+  color: #5f6368;
+  font-size: 12px;
+}
+
+.divider {
+  font-size: 12px;
+  color: #9aa0a6;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.labelHint {
+  font-weight: 400;
+  color: #5f6368;
+  margin-left: 4px;
+}

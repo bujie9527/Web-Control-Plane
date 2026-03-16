@@ -1,0 +1,35 @@
+---
+description: 执行监督备用策略规则，定义 fallback Agent / Skill 的使用边界
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 执行监督备用策略规则
+
+## 目标
+当主 Agent 或主 Skill 无法完成节点执行时，Supervisor 可在允许范围内切换备用 Agent 或备用 Skill。
+
+## 核心原则
+
+### 1. Fallback 必须来源于节点配置
+必须由 WorkflowTemplateNode 提供：
+- fallbackAgentTemplateIds
+- fallbackSkillIds
+
+Supervisor 不得自由发明新的 Agent 或 Skill。
+
+### 2. Fallback 必须写日志
+切换备用 Agent 或 Skill 时，必须写入 Runtime Log。
+
+### 3. Fallback 优先级必须可读
+前台应展示：
+- 备用 Agent 列表
+- 备用 Skill 列表
+- 当前是否已切换
+
+## 禁止事项
+禁止：
+- 切换到系统中不存在的 Agent
+- 切换到不在节点允许范围内的 Skill
+- 前台不展示恢复策略就静默切换

@@ -1,0 +1,55 @@
+---
+description: WorkflowTemplate 发布治理规则
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# WorkflowTemplate 发布规则
+
+## 目标
+
+确保流程模板发布受到严格控制。
+
+## 发布权限
+
+平台管理员：
+
+- 可发布 system 模板
+- 可发布 tenant 模板
+
+租户用户：
+
+- 仅可发布 tenant 模板
+
+## 发布流程
+
+必须经过：
+
+Draft
+→ Validator
+→ Confirm Publish
+→ Create Template
+
+## 必须记录
+
+发布行为必须写入：
+
+WorkflowTemplatePublishRecord
+
+字段：
+
+- planningSessionId
+- planningDraftId
+- draftVersion
+- templateId
+- publishedBy
+- publishedAt
+
+## 禁止事项
+
+禁止：
+
+- 直接在 UI 创建 Template 而绕过 Draft
+- 跳过 Validator 发布
+- 发布后丢失来源信息

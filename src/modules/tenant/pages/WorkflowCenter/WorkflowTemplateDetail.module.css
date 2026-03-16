@@ -1,0 +1,117 @@
+.backBar {
+  margin-bottom: 12px;
+}
+
+.backLink {
+  font-size: 14px;
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e8eaed;
+  border-radius: 8px;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #202124;
+}
+
+.summaryLabel {
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 200px;
+}
+
+.loading {
+  margin: 0;
+  color: #5f6368;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+.kvGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  align-items: baseline;
+  font-size: 14px;
+  color: #202124;
+}
+
+.kvLabel {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.textBlock {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #202124;
+  white-space: pre-wrap;
+}
+
+.nodeTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.nodeTable th,
+.nodeTable td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.nodeTable th {
+  color: #5f6368;
+  font-weight: 500;
+  background: #f8f9fa;
+}
+
+.nodeTable td {
+  color: #202124;
+}
+
+.placeholderHint {
+  margin: 0;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.configBtn {
+  padding: 4px 12px;
+  font-size: 13px;
+  color: #1a73e8;
+  background: #fff;
+  border: 1px solid #1a73e8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.configBtn:hover {
+  background: #e8f0fe;
+}

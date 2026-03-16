@@ -1,0 +1,53 @@
+---
+description: LLM 执行器基线规则，定义真实模型接入的统一抽象层
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# LLM 执行器基线规则
+
+## 目标
+系统接入真实 LLM 时，必须通过统一的 LLM Executor 抽象层，不得在页面层、Agent 层或 service 层直接散落 provider 调用逻辑。
+
+## 核心原则
+
+### 1. 所有真实模型调用必须走统一执行器
+禁止：
+- 页面直接调用模型 SDK
+- plannerService 直接调用 provider API
+- skill 逻辑中散落模型访问代码
+
+### 2. 必须存在模型配置对象
+至少支持：
+- provider
+- modelKey
+- isEnabled
+- isDefault
+- temperature
+- maxTokens
+- timeoutMs
+- retryCount
+- structuredOutputMode
+- fallbackModelKey
+
+### 3. 执行器必须返回结构化结果
+至少包括：
+- success
+- rawText
+- parsedJson
+- errorCode
+- errorMessage
+- errorMessageZh
+- modelKey
+- provider
+- latencyMs
+
+### 4. 前台错误必须中文化
+禁止将 provider 原始英文错误直接暴露给用户。
+
+## 禁止事项
+禁止：
+- 在 Phase 15 中大面积给所有 Agent 接真实 LLM
+- 在本阶段绕过 Executor 直接接模型
+- 只做 API key 输入而不建立统一执行器抽象

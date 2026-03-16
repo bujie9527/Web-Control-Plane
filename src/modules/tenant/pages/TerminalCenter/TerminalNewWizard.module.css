@@ -1,0 +1,165 @@
+.stepIndicator {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.loading {
+  margin: 0;
+  padding: 16px 0;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.errorText {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #d93025;
+}
+
+.typeGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.categoryBlock {
+  margin: 0;
+}
+
+.categoryTitle {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3c4043;
+}
+
+.cardRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.typeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 16px;
+  min-width: 200px;
+  border: 2px solid #e8eaed;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.typeCard:hover {
+  border-color: #1a73e8;
+  background: #f8fbff;
+}
+
+.typeCardSelected {
+  border-color: #1a73e8;
+  background: #e8f0fe;
+}
+
+.typeName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #202124;
+  margin-bottom: 6px;
+}
+
+.typeDesc {
+  font-size: 13px;
+  color: #5f6368;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: #e8eaed;
+  color: #5f6368;
+}
+
+.formRow {
+  margin-bottom: 16px;
+}
+
+.formRow label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.formRow input,
+.formRow select {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+}
+
+.sectionTitle {
+  margin: 20px 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3c4043;
+}
+
+.footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.summary {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.testBlock {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.testSuccess {
+  font-size: 14px;
+  color: #1e8e3e;
+}
+
+.testFailed {
+  font-size: 14px;
+  color: #d93025;
+}
+
+.multiSelect {
+  min-height: 100px;
+  max-width: 400px;
+}
+
+.hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #5f6368;
+}

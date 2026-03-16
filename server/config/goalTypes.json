@@ -1,0 +1,9 @@
+[
+  { "id": "brand_awareness", "code": "brand_awareness", "name": "品牌曝光", "allowedMetricCodes": ["impressions", "reach", "profile_visits"] },
+  { "id": "engagement_growth", "code": "engagement_growth", "name": "互动增长", "allowedMetricCodes": ["likes", "comments", "shares", "engagement_rate"] },
+  { "id": "follower_growth", "code": "follower_growth", "name": "粉丝增长", "allowedMetricCodes": ["new_followers", "follower_count", "follower_growth_rate"] },
+  { "id": "lead_generation", "code": "lead_generation", "name": "线索获取", "allowedMetricCodes": ["leads", "click_through_rate", "form_submissions"] },
+  { "id": "conversion", "code": "conversion", "name": "转化提升", "allowedMetricCodes": ["conversions", "conversion_rate", "revenue"] },
+  { "id": "seo_growth", "code": "seo_growth", "name": "SEO / GEO 增长", "allowedMetricCodes": ["organic_traffic", "keyword_rankings", "backlinks"] },
+  { "id": "traffic_growth", "code": "traffic_growth", "name": "网站流量增长", "allowedMetricCodes": ["page_views", "unique_visitors", "session_duration"] }
+]

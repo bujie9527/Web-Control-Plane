@@ -1,0 +1,295 @@
+.kvGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  align-items: center;
+  font-size: 14px;
+  color: #202124;
+}
+
+.kvLabel {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.alertList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.alertList li {
+  margin-bottom: 8px;
+}
+
+.emptyHint {
+  margin: 0 0 12px;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.dl dt {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.dl dd {
+  margin: 0;
+}
+
+.placeholderBtn {
+  margin-top: 12px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #1a73e8;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.placeholderBtn:hover {
+  background: #f1f3f4;
+}
+
+.placeholderAction {
+  font-size: 13px;
+  color: #1a73e8;
+  cursor: pointer;
+}
+
+.goalDesc {
+  margin: 0;
+  font-size: 14px;
+  color: #202124;
+  line-height: 1.5;
+}
+
+.teamSummary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.teamSummary .kvLabel {
+  color: #5f6368;
+}
+
+.actionGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.actionDivider {
+  color: #dadce0;
+  font-size: 12px;
+  user-select: none;
+}
+
+.toolbar {
+  margin-bottom: 12px;
+}
+
+.dlWrap {
+  margin: 0;
+}
+
+.identityBlock {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.identityBlockTitle {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #202124;
+}
+
+.corePositioning {
+  margin: 8px 0 12px;
+  font-size: 13px;
+  color: #5f6368;
+  line-height: 1.5;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.formInput,
+.formSelect {
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+}
+
+.formSelect {
+  cursor: pointer;
+}
+
+.formHint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #5f6368;
+}
+
+.formError {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #d93025;
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.primaryBtn {
+  padding: 8px 20px;
+  font-size: 14px;
+  color: #fff;
+  background: #1a73e8;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  background: #1765cc;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sopSection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.sopSectionTitle {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.sopRaw {
+  margin: 0;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #202124;
+  background: #f8f9fa;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.sopParsed {
+  margin: 0;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #5f6368;
+  background: #f1f3f4;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.legacySection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaed;
+}
+
+.legacySectionTitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.goalCardItem {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border-left: 3px solid #1a73e8;
+}
+
+.goalCardItem:last-child {
+  margin-bottom: 0;
+}
+
+.deliverableCardItem {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border-left: 3px solid #34a853;
+}
+
+.deliverableCardItem:last-child {
+  margin-bottom: 0;
+}
+
+.recommendedList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recommendedItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.recommendedItem:last-child {
+  margin-bottom: 0;
+}
+
+.recommendedName {
+  font-weight: 500;
+  color: #202124;
+}
+
+.recommendedMeta {
+  font-size: 12px;
+  color: #5f6368;
+}

@@ -1,0 +1,510 @@
+// Prisma Schema - SQLite（与 server/data 同机持久化）
+// 数据库文件：server/data/app.db
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../server/data/app.db"
+}
+
+// ─── 批次 1：流程规划会话 / 草案 / 消息 ─────────────────────────────────────
+
+model WorkflowPlanningSession {
+  id                      String   @id @default(cuid())
+  scopeType               String   // system | tenant
+  tenantId                String?
+  title                   String
+  description             String?
+  projectTypeId           String
+  goalTypeId              String
+  deliverableMode         String
+  sourceType              String   // sop_input | goal_input | manual | project_import
+  sourceText              String?
+  plannerAgentTemplateId  String?
+  plannerExecutionBackend String   // llm | mock | rule_based
+  currentDraftId          String?
+  status                  String   // draft | in_progress | completed | archived | canceled
+  createdBy               String
+  createdAt               String
+  updatedAt               String
+  sourceProjectId         String?
+  sourceTemplateId        String?
+  entryMode               String?  // project | template_clone | blank
+  capabilityPoolSnapshot  String?  // JSON
+
+  drafts   WorkflowPlanningDraft[]
+  messages WorkflowPlanningMessage[]
+}
+
+model WorkflowPlanningDraft {
+  id                       String   @id @default(cuid())
+  sessionId                String
+  version                  Int
+  summary                  String?
+  parsedSOP                String?
+  nodes                    String   // JSON array of WorkflowPlanningDraftNode
+  suggestedAgentTemplateIds String?  // JSON array
+  suggestedSkillIds        String?  // JSON array
+  changeSummary            String?
+  riskNotes                String?
+  missingCapabilities       String?  // JSON array
+  capabilityNotes          String?
+  status                   String   // draft | suggested | accepted | rejected
+  createdAt                String
+  graphVersion             Int?
+  changeSet                String?  // JSON
+  validationSnapshot       String?  // JSON
+  canvasLayout             String?  // JSON viewport
+
+  session WorkflowPlanningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model WorkflowPlanningMessage {
+  id                  String  @id @default(cuid())
+  sessionId           String
+  role                String  // user | assistant | system
+  content             String
+  relatedDraftVersion Int?
+  messageType         String  // chat | summary | risk | suggestion | system
+  createdAt           String
+
+  session WorkflowPlanningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+// ─── 批次 2：Project / ProjectGoal / ProjectSOP ─────────────────────────────────
+
+model Project {
+  id                           String   @id @default(cuid())
+  tenantId                     String
+  name                         String
+  description                  String?
+  status                       String   // draft | running | paused | archived
+  ownerId                      String
+  projectTypeCode              String?
+  goalSummary                  String?
+  kpiSummary                   String?
+  allowedAgentTemplateIds      String?  // JSON array
+  preferredAgentTemplateIds    String?
+  defaultPlannerAgentTemplateId String?
+  defaultSupervisorAgentTemplateId String?
+  selectedWorkflowTemplateId    String?
+  createdAt                    String
+  updatedAt                    String
+
+  goals ProjectGoal[]
+  sops  ProjectSOP[]
+}
+
+model ProjectGoal {
+  id                  String   @id @default(cuid())
+  projectId           String
+  goalType            String   // growth | brand | conversion | other
+  goalName            String
+  goalDescription     String
+  successCriteria     String?
+  kpiDefinition       String?
+  isLocked            Boolean  @default(false)
+  goalTypeCode        String?
+  primaryMetricCode   String?
+  secondaryMetricCodes String?  // JSON array
+  createdAt           String
+  updatedAt           String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectSOP {
+  id         String   @id @default(cuid())
+  projectId  String
+  sopRaw     String
+  sopParsed  String?  // JSON
+  status     String   // draft | active | archived
+  version    String
+  createdAt  String
+  updatedAt  String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+// ─── 批次 3：Identity / Terminal ──────────────────────────────────────────────
+
+model Identity {
+  id                String   @id @default(cuid())
+  tenantId          String
+  name              String
+  type              String?
+  corePositioning   String?
+  toneStyle         String?
+  contentDirections String?  // JSON
+  behaviorRules     String?
+  platformAdaptations String? // JSON
+  status            String
+  createdAt         String
+  updatedAt         String
+}
+
+model Terminal {
+  id               String   @id @default(cuid())
+  tenantId         String
+  name             String
+  type             String?  // SystemTerminalType.code
+  typeCategory     String?  // api | browser | mcp（冗余，便于筛选）
+  identityId       String?  // 对应前端的 primaryIdentityId
+  status           String
+  credentialsJson  String?  // 加密存储，服务端读取
+  configJson       String?  // 非敏感配置
+  linkedProjectIds String?  // JSON array
+  lastTestedAt     String?
+  lastTestResult   String?  // success | failed | unknown
+  lastTestMessage  String?
+  notes            String?
+  createdAt        String
+  updatedAt        String
+}
+
+// ─── 终端类型工厂（系统级，批次 8）───────────────────────────────────────────────
+
+model SystemTerminalType {
+  id                       String   @id @default(cuid())
+  name                     String
+  nameZh                   String
+  code                     String   @unique
+  typeCategory             String   // api | browser | mcp
+  icon                     String?
+  description              String?
+  authSchema               String?  // JSON Schema string
+  configSchema             String?  // JSON Schema string
+  supportedProjectTypeIds  String?  // JSON array string
+  capabilityTags           String?  // JSON array string
+  status                   String   @default("active")
+  isSystemPreset           Boolean  @default(true)
+  version                  String   @default("1.0")
+  createdAt                String
+  updatedAt                String
+}
+
+// ─── 批次 4：WorkflowTemplate / WorkflowTemplateNode ───────────────────────────
+
+model WorkflowTemplate {
+  id                         String   @id @default(cuid())
+  scopeType                  String   // system | tenant
+  tenantId                   String?
+  name                       String
+  code                       String?
+  description                String?
+  status                     String
+  version                    Int      @default(1)
+  nodeCount                  Int      @default(0)
+  supportedProjectTypeId    String?
+  supportedGoalTypeIds      String?   // JSON array
+  supportedDeliverableModes String?   // JSON array
+  createdAt                  String
+  updatedAt                  String
+
+  nodes WorkflowTemplateNode[]
+}
+
+model WorkflowTemplateNode {
+  id                       String   @id @default(cuid())
+  workflowTemplateId       String
+  key                      String
+  name                     String
+  description              String?
+  executionType            String
+  intentType               String
+  orderIndex               Int
+  dependsOnNodeIds         String?   // JSON array
+  recommendedAgentTemplateId String?
+  allowedSkillIds          String?   // JSON array
+  allowedTerminalTypes     String?   // JSON array
+  allowedAgentRoleTypes    String?   // JSON array
+  inputMapping             String?   // JSON
+  outputMapping            String?   // JSON
+  reviewPolicy             String?   // JSON
+  retryPolicy              String?   // JSON
+  fallbackAgentTemplateIds String?   // JSON array
+  fallbackSkillIds         String?   // JSON array
+  supervisorPolicy         String?   // JSON
+  bindingStatus            String?   // ready | placeholder | missing
+  placeholderSpec          String?   // JSON
+  position                 String?   // JSON { x, y }
+  createdAt                String
+  updatedAt                String
+
+  template WorkflowTemplate @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
+}
+
+// ─── 批次 5：WorkflowInstance / WorkflowInstanceNode / Task ────────────────────
+
+model WorkflowInstance {
+  id                 String   @id @default(cuid())
+  projectId          String
+  workflowTemplateId String
+  status             String
+  currentNodeKey     String?  // 当前执行到的节点 key，用于恢复执行
+  createdAt          String
+  updatedAt          String
+
+  nodes WorkflowInstanceNode[]
+}
+
+model WorkflowInstanceNode {
+  id             String   @id @default(cuid())
+  instanceId     String
+  templateNodeId String?
+  key            String
+  name           String
+  status         String
+  orderIndex     Int
+  createdAt      String
+  updatedAt      String
+  // Worker 执行结果（Phase E）
+  resultSummary            String?
+  workerOutputJson         String?  // JSON
+  errorSummary             String?
+  reviewSummary            String?
+  retryCount               Int      @default(0)
+  workerExecutionModel     String?
+  workerExecutionDurationMs Int?
+  workerExecutionAgentId   String?
+  selectedAgentTemplateId  String?
+  recoveryStatus           String?
+  lastRecoveryAction       String?
+
+  instance WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id                     String   @id @default(cuid())
+  projectId              String
+  workflowInstanceId     String?
+  workflowInstanceNodeId String?
+  title                  String
+  status                 String
+  createdAt              String
+  updatedAt              String
+}
+
+// ─── 批次 6：Tenant ───────────────────────────────────────────────────────────
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  code      String?
+  status    String
+  createdAt String
+  updatedAt String
+}
+
+// ─── 批次 7：AgentTemplate（平台级模板资产）──────────────────────────────────────
+
+model AgentTemplate {
+  id                          String   @id
+  name                        String
+  nameZh                      String?
+  code                        String   @unique
+  description                 String?
+  roleType                    String
+  category                    String?
+  domain                      String?
+  sceneTags                   String?  // JSON string[]
+  platformType                String?  // general | facebook | x | tiktok | instagram | wechat
+  archetypeCode               String?
+  parentTemplateId            String?
+  sourceTemplateId            String?
+  sourceVersion               String?
+  status                      String   @default("draft")
+  version                     Int      @default(1)
+  isLatest                    Boolean  @default(true)
+  isSystemPreset              Boolean  @default(false)
+  isCloneable                 Boolean  @default(true)
+  supportedProjectTypeIds     String?  // JSON string[]
+  supportedGoalTypeIds         String?  // JSON string[]
+  supportedSkillIds           String?  // JSON string[]
+  defaultExecutorType         String   @default("agent")
+  allowedExecutorTypes        String?  // JSON string[]
+  allowedTerminalTypes        String?  // JSON string[]
+  defaultModelKey             String?
+  fallbackModelKeys           String?  // JSON string[]
+  temperature                 Float?
+  maxTokens                   Int?
+  systemPromptTemplate        String?
+  instructionTemplate         String?
+  outputFormat                String?
+  requireGoalContext          Boolean  @default(false)
+  requireIdentityContext      Boolean  @default(false)
+  requireSOPContext           Boolean  @default(false)
+  requireStructuredOutput     Boolean  @default(false)
+  disallowDirectTerminalAction Boolean @default(true)
+  requireHumanReview          Boolean  @default(false)
+  requireNodeReview            Boolean  @default(false)
+  autoApproveWhenConfidenceGte Float?
+  plannerDomain               String?
+  plannerTier                 String?
+  changeSummary               String?  // JSON string[]
+  capabilityNotes             String?
+  notes                       String?
+  manual                      Boolean  @default(true)
+  semi_auto                   Boolean  @default(true)
+  full_auto                   Boolean  @default(false)
+  createdAt                   String
+  updatedAt                   String
+}
+
+// ─── 批次 7：Skill（平台级能力资产）─────────────────────────────────────────────
+
+model Skill {
+  id               String   @id
+  name             String
+  nameZh           String?
+  code             String   @unique
+  category         String
+  executionType    String   // llm | tool | hybrid
+  description      String?
+  version          String   @default("1.0.0")
+  status           String   @default("active")
+  isSystemPreset   Boolean  @default(false)
+  openClawSpecJson String?  // JSON
+  createdAt        String
+  updatedAt        String
+}
+
+// ─── 批次 7：LLM 配置中心（Provider / ModelConfig / AgentLLMBinding）────────────
+
+model LLMProvider {
+  id           String   @id
+  name         String
+  nameZh       String?
+  providerType String
+  baseUrl      String?
+  credentialId String?
+  status       String   @default("active")
+  notes        String?
+  createdAt    String
+  updatedAt    String
+
+  modelConfigs LLMModelConfig[]
+}
+
+model LLMModelConfig {
+  id                        String   @id
+  name                      String
+  nameZh                    String?
+  providerId                String
+  modelKey                  String
+  isEnabled                 Boolean  @default(true)
+  isDefault                 Boolean  @default(false)
+  temperature               Float    @default(0.7)
+  maxTokens                 Int      @default(2048)
+  timeoutMs                 Int      @default(30000)
+  retryCount                Int      @default(1)
+  structuredOutputMode      String   @default("json_object")
+  fallbackModelConfigId     String?
+  supportedAgentCategories  String?  // JSON string[]
+  notes                     String?
+  createdAt                 String
+  updatedAt                 String
+
+  provider   LLMProvider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  bindings   AgentLLMBinding[]
+}
+
+model AgentLLMBinding {
+  id              String   @id
+  agentTemplateId String
+  modelConfigId   String
+  bindingType     String   // primary | fallback
+  priority        Int      @default(0)
+  isEnabled       Boolean  @default(true)
+  notes          String?
+  createdAt       String
+  updatedAt       String
+
+  modelConfig LLMModelConfig @relation(fields: [modelConfigId], references: [id], onDelete: Cascade)
+}
+
+// ─── 批次 9：项目领域补全（ProjectIdentityBinding / Deliverable / ResourceConfig）───
+
+model ProjectIdentityBinding {
+  id         String  @id @default(cuid())
+  projectId  String
+  identityId String
+  isDefault  Boolean @default(false)
+  createdAt  String
+}
+
+model ProjectDeliverable {
+  id              String  @id @default(cuid())
+  projectId       String
+  deliverableType String  // content | follower | lead | website_update | other
+  description     String
+  frequency       String? // daily | weekly | monthly | one_time
+  target          String? // 目标量，如 "30 posts"
+  notes           String?
+  createdAt       String
+  updatedAt       String
+}
+
+model ProjectResourceConfig {
+  id         String  @id @default(cuid())
+  projectId  String
+  configType String  // agent_scope | preferred_agent | budget | other
+  label      String
+  value      String  // JSON string or plain value
+  notes      String?
+  createdAt  String
+  updatedAt  String
+}
+
+// ─── 批次 9：运行态持久化（WorkflowRuntimeLog / WorkflowSupervisorDecision / WorkflowPublishRecord）───
+
+model WorkflowRuntimeLog {
+  id          String  @id @default(cuid())
+  instanceId  String
+  nodeId      String?
+  eventType   String  // workflow_started | node_started | node_completed | node_failed | waiting_review | manual_continue | workflow_completed | supervisor_analyzed
+  messageZh   String
+  operatorId  String? // 人工操作时的用户 ID
+  meta        String? // JSON，附加上下文
+  createdAt   String
+}
+
+model WorkflowSupervisorDecision {
+  id                  String  @id @default(cuid())
+  instanceId          String
+  nodeId              String?
+  decisionType        String  // retry | skip | manual_review | pause_workflow | continue_workflow | abort_workflow | no_action
+  reason              String
+  suggestedNextAction String?
+  relatedErrorSummary String?
+  status              String  @default("suggested") // suggested | applied | dismissed
+  appliedBy           String?
+  appliedAt           String?
+  createdAt           String
+}
+
+model WorkflowPublishRecord {
+  id               String  @id @default(cuid())
+  templateId       String
+  planningSessionId String?
+  planningDraftId  String?
+  draftVersion     Int?
+  publishedBy      String
+  publishedAt      String
+  notes            String?
+}
+
+// ─── 认证（迭代五）────────────────────────────────────────────────────────────
+model User {
+  id           String   @id @default(cuid())
+  account      String   @unique
+  passwordHash String
+  name         String
+  role         String   // RoleCode 枚举值
+  tenantId     String?  // 为空时 = 平台管理员
+  isActive     Boolean  @default(true)
+  createdAt    String
+  updatedAt    String
+}

@@ -1,0 +1,119 @@
+.loading {
+  margin: 0;
+  padding: 16px 0;
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.backLink {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.notice {
+  padding: 8px 16px;
+  margin: 0 0 8px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.backBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 12px;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.breadcrumb {
+  color: #5f6368;
+}
+
+.summaryBar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 0 20px;
+  border-bottom: 1px solid #e8eaed;
+  margin-bottom: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.summaryLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summaryTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #202124;
+  margin: 0;
+}
+
+.summaryMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.summaryItem {
+  color: #3c4043;
+}
+
+.summaryActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tabNav {
+  display: flex;
+  border-bottom: 2px solid #e8eaed;
+  margin-bottom: 20px;
+  gap: 0;
+}
+
+.tabItem, .tabActive {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #5f6368;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tabItem:hover {
+  color: #1a73e8;
+}
+
+.tabActive {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+  font-weight: 500;
+}
+
+.tabContent {
+  margin-top: 8px;
+}
+
+.tabContent > * + * {
+  margin-top: 16px;
+}

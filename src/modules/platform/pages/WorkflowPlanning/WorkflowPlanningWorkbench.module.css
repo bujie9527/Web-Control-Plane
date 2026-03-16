@@ -1,0 +1,336 @@
+.loading {
+  margin: 0;
+  color: #5f6368;
+}
+
+.headerBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.backLink {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+
+/* 三栏：左对话 360px | 中文字摘要 280px | 右画布 1fr */
+.threeColumn {
+  display: grid;
+  grid-template-columns: 360px 280px 1fr;
+  gap: 16px;
+  height: calc(100vh - 160px);
+  min-height: 480px;
+}
+
+.chatColumn {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.summaryColumn {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.canvasColumn {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.summaryPanelHeader {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e8e8e8;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.summaryVersionRow {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.summaryNodeList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.summaryNodeCard {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.summaryNodeCard:hover {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.summaryNodeCard.selected {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.summaryNodeCard.placeholder {
+  border-color: #fa8c16;
+  background: #fff7e6;
+}
+
+.summaryNodeCardOrder {
+  color: #666;
+  margin-right: 6px;
+}
+
+.summaryNodeCardName {
+  font-weight: 500;
+}
+
+.summaryNodeCardBadge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  font-size: 11px;
+  color: #666;
+}
+
+.summaryBlockWrap {
+  padding: 8px 12px;
+  border-top: 1px solid #e8e8e8;
+  font-size: 12px;
+}
+
+.summaryChangeSummary {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background: #e6f7ff;
+  border-radius: 4px;
+}
+
+.summaryRiskNotes {
+  padding: 6px 8px;
+  background: #fff7e6;
+  border-radius: 4px;
+  color: #ad8b00;
+}
+
+.contextBar {
+  margin-bottom: 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.contextBarToggle {
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contextBarContent {
+  padding: 12px;
+  border-top: 1px solid #e8e8e8;
+  font-size: 13px;
+}
+
+.contextChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.contextChip {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #e8e8e8;
+}
+
+.canvasWrap {
+  flex: 1;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.missingCapabilitiesBadge {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fffbe6;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #ad8b00;
+}
+
+.inspectorWrap {
+  margin-top: 8px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.kvGrid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 6px 12px;
+  align-items: start;
+  font-size: 13px;
+}
+
+.kvLabel {
+  color: #5f6368;
+}
+
+.sourceText {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.messageList {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.messageItem {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.role_user {
+  border-left: 3px solid #1a73e8;
+}
+
+.role_assistant {
+  border-left: 3px solid #34a853;
+}
+
+.role_system {
+  border-left: 3px solid #5f6368;
+}
+
+.messageRole {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+.messageContent {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.relatedDraft {
+  font-size: 11px;
+  color: #1a73e8;
+  margin-top: 4px;
+  display: block;
+}
+
+.summaryBlock,
+.riskBlock {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fef7e0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.riskBlock {
+  background: #fce8e6;
+}
+
+.nodeList {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.draftActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.hint {
+  color: #5f6368;
+  font-size: 13px;
+  margin: 0;
+}
+
+.messageInputRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.messageInput {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+}
+
+.validationOk {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #e6f4ea;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.validationError {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fce8e6;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.validationList,
+.validationWarnings {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+}
+
+.validationWarnings {
+  color: #b36b00;
+}

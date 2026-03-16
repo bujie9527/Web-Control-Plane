@@ -1,0 +1,18 @@
+# 生产部署时请在项目根目录配置 .env（参考 .env.example）
+# 至少包含：NODE_ENV、PORT、DATABASE_URL、OPENAI_API_KEY 等
+version: "3.8"
+services:
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    volumes:
+      - app_data:/app/server/data
+    restart: unless-stopped
+
+volumes:
+  app_data:

@@ -1,0 +1,73 @@
+---
+alwaysApply: true
+---
+
+# SOP to Workflow Boundary Rules
+
+## 边界定义
+
+在本系统中，SOP、WorkflowTemplate、WorkflowInstance、Task 必须严格区分。
+
+---
+
+## SOP
+
+SOP 是项目级自然语言操作方案。
+
+它回答：
+
+“这件事总体怎么做？”
+
+SOP 不是任务实例，也不是流程模板。
+
+---
+
+## WorkflowTemplate
+
+WorkflowTemplate 是系统预设的标准流程结构。
+
+它回答：
+
+“系统里有哪些标准流程可选？”
+
+---
+
+## WorkflowInstance
+
+WorkflowInstance 是一次具体执行。
+
+它回答：
+
+“当前项目这次按什么身份、基于什么模板或建议流程，具体怎么跑？”
+
+---
+
+## Task
+
+Task 是业务层对执行对象的展示与操作单元。
+
+Task 必须明确来源于某个 WorkflowInstance 或某个 WorkflowInstanceNode，不应脱离流程结构独立存在。
+
+---
+
+## 当前阶段要求
+
+当前阶段允许：
+
+- 根据 Goal / Deliverable / SOP 推荐流程模板
+- 根据 SOP 生成建议流程草稿占位
+- 人工确认后创建 WorkflowInstance
+
+当前阶段不允许：
+
+- 把 SOP 直接当作 WorkflowTemplate
+- 把 SOP 直接自动变成不可追踪的 Task 列表
+- 把 Goal / SOP / Workflow 混为同一对象
+
+---
+
+## 开发原则
+
+- 先建立“推荐 / 解析建议 / 人工确认”机制
+- 先保证可控和可追踪
+- 后续再增强自动拆解与自动执行

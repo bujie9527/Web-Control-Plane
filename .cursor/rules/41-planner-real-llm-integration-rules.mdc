@@ -1,0 +1,47 @@
+---
+description: 规划助手真实 LLM 接入规则，限定 Phase 15 只接 Base Workflow Planner Agent
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# 规划助手真实 LLM 接入规则
+
+## 目标
+Phase 15 的第一条真实模型接入链路，只允许接入 Base Workflow Planner Agent。
+
+## 核心原则
+
+### 1. 只接 Base Workflow Planner Agent
+本阶段允许真实模型接入的对象仅限：
+- Workflow Planner Agent（基础版）
+
+禁止本阶段同时接入：
+- Execution Supervisor Agent
+- 内容生成 Agent
+- 内容审核 Agent
+- 发布 Agent
+- 其他 Worker Agent
+
+### 2. 只支持两类 Planner 动作
+本阶段仅支持：
+- 生成初稿
+- 修订草案
+
+### 3. Planner 真实模型输出必须进入 Draft
+Planner 不得只返回自然语言结果。
+必须形成：
+- WorkflowPlanningDraft
+- changeSummary
+- riskNotes
+
+### 4. 规划链路必须继续经过 Validator
+真实模型输出不得绕过：
+- Schema 校验
+- Planning Validator
+
+## 禁止事项
+禁止：
+- 本阶段让 Planner 直接发布模板
+- 本阶段让模型直接改写 WorkflowTemplate
+- 本阶段让多个垂直 Planner 同时接入真实模型
