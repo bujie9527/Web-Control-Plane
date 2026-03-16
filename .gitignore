@@ -4,4 +4,5 @@ dist/
 server/data/credentials.json
 server/data/
 deploy/tmp_awcc/
+logs/
 

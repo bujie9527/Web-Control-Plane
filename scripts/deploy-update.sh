@@ -27,7 +27,11 @@ if [ -n "$USE_PM2" ]; then
   npx prisma migrate deploy 2>/dev/null || true
   if pm2 describe awcc >/dev/null 2>&1; then
     echo "[deploy] 重启 PM2 进程 awcc..."
-    pm2 restart awcc
+    pm2 restart awcc || {
+      echo "[deploy] PM2 进程状态异常，重新创建 awcc..."
+      pm2 delete awcc >/dev/null 2>&1 || true
+      pm2 start ecosystem.config.cjs
+    }
   else
     echo "[deploy] 启动 PM2 进程 awcc（首次）..."
     pm2 start ecosystem.config.cjs
