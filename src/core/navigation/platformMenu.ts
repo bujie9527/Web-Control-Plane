@@ -5,13 +5,13 @@ import { isSystemAdmin } from '@/core/permission/constants'
 
 /** 平台后台基础菜单（与 System 彻底分离，不包含 Agent/流程工厂） */
 const platformMenuBase: MenuItem[] = [
-  { key: 'platform-home', path: ROUTES.PLATFORM.HOME, label: '平台工作台' },
-  { key: 'tenants', path: ROUTES.PLATFORM.TENANTS, label: '租户管理' },
-  { key: 'users', path: ROUTES.PLATFORM.USERS, label: '平台用户' },
-  { key: 'quota', path: ROUTES.PLATFORM.QUOTA, label: '资源与配额' },
-  { key: 'templates', path: ROUTES.PLATFORM.TEMPLATES, label: '模板中心' },
-  { key: 'audit', path: ROUTES.PLATFORM.AUDIT, label: '平台审计' },
-  { key: 'settings', path: ROUTES.PLATFORM.SETTINGS, label: '平台设置' },
+  { key: 'platform-home', path: ROUTES.PLATFORM.HOME, label: '平台工作台', icon: 'LayoutDashboard' },
+  { key: 'tenants', path: ROUTES.PLATFORM.TENANTS, label: '租户管理', icon: 'Building2' },
+  { key: 'users', path: ROUTES.PLATFORM.USERS, label: '平台用户', icon: 'Users' },
+  { key: 'quota', path: ROUTES.PLATFORM.QUOTA, label: '资源与配额', icon: 'Package' },
+  { key: 'templates', path: ROUTES.PLATFORM.TEMPLATES, label: '模板中心', icon: 'Library' },
+  { key: 'audit', path: ROUTES.PLATFORM.AUDIT, label: '平台审计', icon: 'Shield' },
+  { key: 'settings', path: ROUTES.PLATFORM.SETTINGS, label: '平台设置', icon: 'Settings' },
 ]
 
 export const platformMenuConfig: MenuItem[] = platformMenuBase
@@ -23,6 +23,6 @@ export function getPlatformMenuConfig(user: User | null): MenuItem[] {
   if (!user || !isSystemAdmin(user)) return platformMenuBase
   return [
     ...platformMenuBase,
-    { key: 'system-console', path: ROUTES.SYSTEM.BASE, label: '系统控制台' },
+    { key: 'system-console', path: ROUTES.SYSTEM.BASE, label: '系统控制台', icon: 'Waypoints' },
   ]
 }

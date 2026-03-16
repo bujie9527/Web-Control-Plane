@@ -29,7 +29,7 @@ const auditColumns = [
 
 export function SystemSettings() {
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
   const [members, setMembers] = useState<TenantMemberItem[]>([])
   const [roles, setRoles] = useState<TenantRoleItem[]>([])
   const [auditLogs, setAuditLogs] = useState<TenantAuditLogItem[]>([])

@@ -3,6 +3,7 @@
  */
 import { getTaskCenterData } from './taskCenterService'
 import { getProjectList } from './projectService'
+import type { ApiResponse } from '@/core/types/api'
 
 export interface AnalyticsOverviewItem {
   key: string
@@ -21,6 +22,24 @@ export interface AnalyticsData {
 }
 
 export async function getAnalyticsData(tenantId: string): Promise<AnalyticsData> {
+  try {
+    const res = await fetch(`/api/analytics/tenant/${encodeURIComponent(tenantId)}`)
+    const json = (await res.json()) as ApiResponse<{
+      overview: { projectCount: number; reportCount: number; incomingCount: number; outgoingCount: number }
+    }>
+    if (res.ok && json.code === 0 && json.data) {
+      const overview: AnalyticsOverviewItem[] = [
+        { key: '项目总数', value: String(json.data.overview.projectCount) },
+        { key: '报告数量', value: String(json.data.overview.reportCount) },
+        { key: '接入消息', value: String(json.data.overview.incomingCount) },
+        { key: '发送消息', value: String(json.data.overview.outgoingCount) },
+      ]
+      return { overview, projectStats: [] }
+    }
+  } catch {
+    // 降级到旧聚合逻辑
+  }
+
   const [taskData, projectRes] = await Promise.all([
     getTaskCenterData(tenantId),
     getProjectList({ page: 1, pageSize: 100 }),

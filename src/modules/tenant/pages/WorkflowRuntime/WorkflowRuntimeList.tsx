@@ -32,7 +32,7 @@ interface WorkflowRuntimeListProps {
 export function WorkflowRuntimeList({ mode }: WorkflowRuntimeListProps) {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
 
   const [list, setList] = useState<WorkflowRuntimeListItem[]>([])
   const [loading, setLoading] = useState(false)

@@ -9,7 +9,6 @@ import {
   type PlanningLLMParseError,
   type ParsedPlanningLLMOutput,
 } from './planningLLMOutputParser'
-import { appendLLMExecutionLog } from '../mock/llmExecutionLogMock'
 import { getAgentPrimaryModelConfigAsync } from './llmBindingService'
 import { getTemplateList } from '@/modules/platform/services/agentTemplateService'
 import { getSkillList } from '@/modules/platform/services/skillService'
@@ -26,40 +25,40 @@ interface BaseAdapterInput {
   userMessage?: string
 }
 
-// ─── 系统能力上下文构建 ────────────────────────────────────────────────────────
+// ─── 系统能力上下文构�?────────────────────────────────────────────────────────
 
 /**
  * SystemCapabilityContext
- * Planner Prompt 中注入的系统能力上下文
- * 包含当前平台所有 active Agent 和 Skill 的摘要信息
+ * Planner Prompt 中注入的系统能力上下�?
+ * 包含当前平台所�?active Agent �?Skill 的摘要信�?
  */
 interface SystemCapabilityContext {
-  agentLines: string[]   // 每个 Agent 一行文本，供 Prompt 拼接
-  skillLines: string[]   // 每个 Skill 一行文本，供 Prompt 拼接
+  agentLines: string[]   // 每个 Agent 一行文本，�?Prompt 拼接
+  skillLines: string[]   // 每个 Skill 一行文本，�?Prompt 拼接
 }
 
 /**
  * loadSystemCapabilityContext
- * 加载当前系统中所有 active AgentTemplate 和 Skill
- * 转换为 Planner Prompt 可直接拼接的文本行
+ * 加载当前系统中所�?active AgentTemplate �?Skill
+ * 转换�?Planner Prompt 可直接拼接的文本�?
  *
  * AgentTemplate 行格式：
- *   {id} | {nameZh} | 分类: {category} | 支持技能: {supportedSkillIds.join(', ')}
+ *   {id} | {nameZh} | 分类: {category} | 支持技�? {supportedSkillIds.join(', ')}
  *
  * Skill 行格式：
  *   {id} | {nameZh} | {description}
  *
- * 若加载失败，返回空列表（不阻断 Planner 执行，仅降级为无能力上下文）
+ * 若加载失败，返回空列表（不阻�?Planner 执行，仅降级为无能力上下文）
  */
 async function loadSystemCapabilityContext(): Promise<SystemCapabilityContext> {
   const agentRes = await getTemplateList({ page: 1, pageSize: 999, status: 'active' }).catch(() => ({ items: [] }))
   const skillRes = await getSkillList({ page: 1, pageSize: 999, status: 'active' }).catch(() => ({ items: [] }))
   const agentLines = (agentRes.items ?? []).map(
     (a) =>
-      `${a.id} | ${a.nameZh ?? a.name} | 分类: ${a.category ?? '—'} | 支持技能: ${(a.supportedSkillIds ?? []).join(', ') || '—'}`,
+      `${a.id} | ${a.nameZh ?? a.name} | 分类: ${a.category ?? '未知'} | 支持技能: ${(a.supportedSkillIds ?? []).join(', ') || '无'}`,
   )
   const skillLines = (skillRes.items ?? []).map(
-    (s) => `${s.id} | ${s.nameZh ?? s.name} | ${s.description ?? '—'}`,
+    (s) => `${s.id} | ${s.nameZh ?? s.name} | ${s.description ?? '暂无'}`,
   )
   return { agentLines, skillLines }
 }
@@ -67,22 +66,22 @@ async function loadSystemCapabilityContext(): Promise<SystemCapabilityContext> {
 function buildCapabilityContextSection(ctx: SystemCapabilityContext): string {
   const agentBlock =
     ctx.agentLines.length > 0
-      ? `【当前系统可用 Agent】\n${ctx.agentLines.join('\n')}`
-      : '【当前系统可用 Agent】\n（暂无）'
+      ? `【当前系统可�?Agent】\n${ctx.agentLines.join('\n')}`
+      : '【当前系统可�?Agent】\n（暂无）'
   const skillBlock =
     ctx.skillLines.length > 0
-      ? `【当前系统可用 Skills】\n${ctx.skillLines.join('\n')}`
-      : '【当前系统可用 Skills】\n（暂无）'
+      ? `【当前系统可�?Skills】\n${ctx.skillLines.join('\n')}`
+      : '【当前系统可�?Skills】\n（暂无）'
   const requirements = `
-【输出要求】
-1. 每个 agent_task 节点的 recommendedAgentTemplateId 必须使用以上 Agent ID 之一。
-2. 如果某节点所需能力在以上列表中不存在，将缺失能力描述添加到 missingCapabilities 数组。
-3. missingCapabilities 中每条格式：「[节点名]需要[能力描述]，但当前无支持的 Agent/Skill」
+【输出要求�?
+1. 每个 agent_task 节点�?recommendedAgentTemplateId 必须使用以上 Agent ID 之一�?
+2. 如果某节点所需能力在以上列表中不存在，将缺失能力描述添加到 missingCapabilities 数组�?
+3. missingCapabilities 中每条格式：「[节点名]需要[能力描述]，但当前无支持的 Agent/Skill�?
 
-【节点字段约束】
-4. executionType 只能是以下之一：agent_task, human_review, approval_gate, result_writer, system_task, manual_input, branch_decision。
-5. intentType 只能是以下之一：create, review, search, research, publish, record, analyze, summarize, classify, reply。
-6. 每个节点的 allowedSkillIds 只能使用以上【当前系统可用 Skills】列表中的 ID，不得自行编造。`
+【节点字段约束�?
+4. executionType 只能是以下之一：agent_task, human_review, approval_gate, result_writer, system_task, manual_input, branch_decision�?
+5. intentType 只能是以下之一：create, review, search, research, publish, record, analyze, summarize, classify, reply�?
+6. 每个节点�?allowedSkillIds 只能使用以上【当前系统可�?Skills】列表中�?ID，不得自行编造。`
   return `${agentBlock}\n\n${skillBlock}\n${requirements}`
 }
 
@@ -102,12 +101,12 @@ export type PlannerLLMAdapterResult = PlannerLLMAdapterSuccess | PlannerLLMAdapt
 
 /**
  * plannerOutputSchema
- * 构造传给 OpenAI response_format.json_schema.schema 的 JSON Schema。
+ * 构造传�?OpenAI response_format.json_schema.schema �?JSON Schema�?
  *
- * strict: true 要求：
- * 1. 每个 object 必须有 additionalProperties: false
- * 2. 每个 object 的 properties 必须全量列在 required 中
- * 3. 可选字段使用 anyOf: [{type: "..."}, {type: "null"}]
+ * strict: true 要求�?
+ * 1. 每个 object 必须�?additionalProperties: false
+ * 2. 每个 object �?properties 必须全量列在 required �?
+ * 3. 可选字段使�?anyOf: [{type: "..."}, {type: "null"}]
  */
 function plannerOutputSchema(): Record<string, unknown> {
   return {
@@ -133,11 +132,11 @@ function plannerOutputSchema(): Record<string, unknown> {
       suggestedSkillIds: {
         anyOf: [{ type: 'array', items: { type: 'string' } }, { type: 'null' }],
       },
-      /** 系统当前无法覆盖的能力需求，格式：「[节点名]需要[能力描述]，但当前无支持的 Agent/Skill」 */
+      /** 系统当前无法覆盖的能力需求，格式：「[节点名]需要[能力描述]，但当前无支持的 Agent/Skill�?*/
       missingCapabilities: {
         anyOf: [{ type: 'array', items: { type: 'string' } }, { type: 'null' }],
       },
-      /** Planner 对 Agent/Skills 覆盖情况的补充说明 */
+      /** Planner �?Agent/Skills 覆盖情况的补充说�?*/
       capabilityNotes: { anyOf: [{ type: 'string' }, { type: 'null' }] },
       nodes: {
         type: 'array',
@@ -182,15 +181,15 @@ function plannerOutputSchema(): Record<string, unknown> {
 
 /**
  * buildPrompts
- * 构造 Planner LLM 调用的 systemPrompt 和 userPrompt
+ * 构�?Planner LLM 调用�?systemPrompt �?userPrompt
  *
  * 新增：capabilitySection 段落注入
- * - 在 userPrompt 中的 SOP/草案信息之前，插入"【当前系统可用 Agent/Skills】"章节
+ * - �?userPrompt 中的 SOP/草案信息之前，插�?【当前系统可�?Agent/Skills�?章节
  * - 该章节由 buildCapabilityContextSection(capabilityCtx) 生成
- * - 同时在输出要求中要求 LLM 填写 missingCapabilities 和 capabilityNotes 字段
+ * - 同时在输出要求中要求 LLM 填写 missingCapabilities �?capabilityNotes 字段
  *
- * @param input - 基础适配器输入
- * @param capabilityCtx - 系统能力上下文（由 loadSystemCapabilityContext 加载）
+ * @param input - 基础适配器输�?
+ * @param capabilityCtx - 系统能力上下文（�?loadSystemCapabilityContext 加载�?
  */
 function buildPrompts(
   input: BaseAdapterInput,
@@ -250,7 +249,7 @@ async function runLLMWithOneRetryOnParseFail(input: BaseAdapterInput): Promise<P
       ok: false,
       errorCode: 'PLANNER_AGENT_NOT_ALLOWED',
       errorMessage: 'Only Base Workflow Planner Agent is allowed in Phase 15',
-      errorMessageZh: '当前阶段仅允许 Base Workflow Planner Agent 接入真实模型',
+      errorMessageZh: '当前阶段仅允�?Base Workflow Planner Agent 接入真实模型',
     }
   }
 
@@ -260,12 +259,12 @@ async function runLLMWithOneRetryOnParseFail(input: BaseAdapterInput): Promise<P
       ok: false,
       errorCode: 'PLANNER_MODEL_BINDING_NOT_FOUND',
       errorMessage: 'No primary model config bound for Base Workflow Planner',
-      errorMessageZh: '未配置流程规划助手主模型，请在模型配置中心绑定',
+      errorMessageZh: '未配置流程规划助手主模型，请在模型配置中心绑定。',
     }
   }
 
   // 加载系统 Agent/Skills 能力上下文，注入 Planner Prompt
-  // 若加载失败则降级为空上下文（不阻断 LLM 调用）
+  // 若加载失败则降级为空上下文（不阻�?LLM 调用�?
   const capabilityCtx = await loadSystemCapabilityContext().catch(() => ({
     agentLines: [],
     skillLines: [],
@@ -287,19 +286,7 @@ async function runLLMWithOneRetryOnParseFail(input: BaseAdapterInput): Promise<P
     outputMode: 'json_schema',
     metadata: reqMeta,
   })
-  appendLLMExecutionLog({
-    agentTemplateId: BASE_PLANNER_AGENT_TEMPLATE_ID,
-    skillCode: input.skillCode,
-    sessionId: input.session.id,
-    draftId: input.baseDraft?.id,
-    provider: first.provider,
-    modelKey: first.modelKey,
-    success: first.success,
-    latencyMs: first.latencyMs,
-    errorCode: first.errorCode,
-    errorMessage: first.errorMessage,
-    errorMessageZh: first.errorMessageZh,
-  })
+  /* LLM execution log: see server WorkflowRuntimeLog */
   if (!first.success) {
     return {
       ok: false,
@@ -320,19 +307,7 @@ async function runLLMWithOneRetryOnParseFail(input: BaseAdapterInput): Promise<P
       outputMode: 'json_schema',
       metadata: reqMeta,
     })
-    appendLLMExecutionLog({
-      agentTemplateId: BASE_PLANNER_AGENT_TEMPLATE_ID,
-      skillCode: input.skillCode,
-      sessionId: input.session.id,
-      draftId: input.baseDraft?.id,
-      provider: retry.provider,
-      modelKey: retry.modelKey,
-      success: retry.success,
-      latencyMs: retry.latencyMs,
-      errorCode: retry.errorCode,
-      errorMessage: retry.errorMessage,
-      errorMessageZh: retry.errorMessageZh,
-    })
+    /* LLM execution log: see server WorkflowRuntimeLog */
     if (retry.success) retryRawText = retry.rawText
   }
 
@@ -372,7 +347,7 @@ export async function reviseDraftByPlannerLLM(
   })
 }
 
-// ─── ClarifyOrGenerate（渐进式澄清 → 生成决策）────────────────────────────────────
+// ─── ClarifyOrGenerate（渐进式澄清 �?生成决策）────────────────────────────────────
 
 export interface ClarifyOrGenerateOutput {
   phase: 'clarifying' | 'generating'
@@ -394,8 +369,8 @@ function clarifyOrGenerateSchema(): Record<string, unknown> {
 }
 
 /**
- * 根据当前会话与用户消息，判断是继续澄清需求还是可以生成草案。
- * 仅在没有草案时由 handlePlannerChat 调用。
+ * 根据当前会话与用户消息，判断是继续澄清需求还是可以生成草案�?
+ * 仅在没有草案时由 handlePlannerChat 调用�?
  */
 export async function clarifyOrGenerateByPlannerLLM(
   session: WorkflowPlanningSession,
@@ -412,7 +387,7 @@ export async function clarifyOrGenerateByPlannerLLM(
       ok: false,
       errorCode: 'PLANNER_AGENT_NOT_ALLOWED',
       errorMessage: 'Only Base Workflow Planner Agent is allowed',
-      errorMessageZh: '当前阶段仅允许 Base Workflow Planner Agent 接入真实模型',
+      errorMessageZh: '当前阶段仅允�?Base Workflow Planner Agent 接入真实模型',
     }
   }
 
@@ -422,14 +397,14 @@ export async function clarifyOrGenerateByPlannerLLM(
       ok: false,
       errorCode: 'PLANNER_MODEL_BINDING_NOT_FOUND',
       errorMessage: 'No primary model config bound for Base Workflow Planner',
-      errorMessageZh: '未配置流程规划助手主模型，请在模型配置中心绑定',
+      errorMessageZh: '未配置流程规划助手主模型，请在模型配置中心绑定。',
     }
   }
 
   const systemPrompt =
     '你是流程规划助手。根据用户当前输入与已有会话，判断信息是否足以生成流程草案。' +
-    '若关键信息不足（如目标、交付物、步骤范围、审核要求等未明确），则 phase 填 clarifying，并给出 1 个追问（clarifyQuestion）及原因（clarifyReason）。' +
-    '若信息已足够，则 phase 填 generating，clarifyQuestion 和 clarifyReason 填 null。' +
+    '若关键信息不足（如目标、交付物、步骤范围、审核要求等未明确），则 phase 为 clarifying，并给出 1 个追问（clarifyQuestion）及原因（clarifyReason）。' +
+    '若信息已足够，则 phase 为 generating，clarifyQuestion 与 clarifyReason 为 null。' +
     '仅输出 JSON，不要输出其他说明。'
 
   const userPrompt =
@@ -448,19 +423,7 @@ export async function clarifyOrGenerateByPlannerLLM(
     metadata: { sessionId: session.id, action: 'clarifyOrGenerate' },
   })
 
-  appendLLMExecutionLog({
-    agentTemplateId: BASE_PLANNER_AGENT_TEMPLATE_ID,
-    skillCode: 'ClarifyOrGenerate',
-    sessionId: session.id,
-    draftId: undefined,
-    provider: result.provider ?? 'openai_compatible',
-    modelKey: result.modelKey ?? 'unknown',
-    success: result.success,
-    latencyMs: result.latencyMs ?? 0,
-    errorCode: result.errorCode,
-    errorMessage: result.errorMessage,
-    errorMessageZh: result.errorMessageZh,
-  })
+  /* LLM execution log: see server WorkflowRuntimeLog */
 
   if (!result.success) {
     return {
@@ -489,3 +452,5 @@ export async function clarifyOrGenerateByPlannerLLM(
     }
   }
 }
+
+

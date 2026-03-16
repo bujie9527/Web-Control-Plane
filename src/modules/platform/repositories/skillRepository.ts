@@ -55,6 +55,14 @@ export async function createSkill(
     version: payload.version,
     status: payload.status,
     openClawSpec: payload.openClawSpec,
+    inputSchemaJson: payload.inputSchemaJson,
+    outputSchemaJson: payload.outputSchemaJson,
+    executionConfigJson: payload.executionConfigJson,
+    promptTemplate: payload.promptTemplate,
+    requiredContextFields: payload.requiredContextFields,
+    estimatedDurationMs: payload.estimatedDurationMs,
+    retryable: payload.retryable,
+    maxRetries: payload.maxRetries,
   }
   return request<Skill>('/api/skills', { method: 'POST', body })
 }
@@ -70,4 +78,14 @@ export async function changeStatus(id: string, status: SkillStatus): Promise<Api
 export async function deleteSkill(id: string): Promise<ApiResponse<{ success: boolean; reason?: string }>> {
   const res = await request<{ success: boolean }>(`/api/skills/${id}`, { method: 'DELETE' })
   return { ...res, data: { success: res.data.success } }
+}
+
+export async function importOpenClawSkill(payload: {
+  content: string
+  format?: 'auto' | 'json' | 'yaml'
+}): Promise<ApiResponse<Skill>> {
+  return request<Skill>('/api/skills/import-openclaw', {
+    method: 'POST',
+    body: payload,
+  })
 }

@@ -149,6 +149,17 @@
   border-radius: 4px;
 }
 
+.formTextarea {
+  width: 100%;
+  max-width: 640px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 .formSelect {
   cursor: pointer;
 }

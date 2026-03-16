@@ -8,8 +8,8 @@ import type { ApiResponse, ListResult } from '@/core/types/api'
 /** Skill 状态 */
 export type SkillStatus = 'active' | 'inactive'
 
-/** 执行类型（占位，可按需要扩展） */
-export type SkillExecutionType = 'llm' | 'tool' | 'hybrid'
+/** 执行类型（与后端 executionType 枚举对齐） */
+export type SkillExecutionType = 'llm' | 'external_api' | 'internal_api' | 'hybrid'
 
 /** 平台级 Skill 定义 */
 export interface Skill {
@@ -23,7 +23,7 @@ export interface Skill {
   code: string
   /** 业务分类（如 content/review/publish/research 等） */
   category: string
-  /** 执行类型（LLM / Tool / Hybrid） */
+  /** 执行类型（LLM / 外部API / 内部API / 混合） */
   executionType: SkillExecutionType
   /** 能力说明（中文） */
   description?: string
@@ -43,6 +43,14 @@ export interface Skill {
     inputSchemaJson?: string
     outputSchemaJson?: string
   }
+  inputSchemaJson?: string
+  outputSchemaJson?: string
+  executionConfigJson?: string
+  promptTemplate?: string
+  requiredContextFields?: string[]
+  estimatedDurationMs?: number
+  retryable?: boolean
+  maxRetries?: number
 
   /**
    * 被哪些 AgentTemplate 使用（由服务层计算或在 mock 中维护）
@@ -88,6 +96,14 @@ export interface UpdateSkillPayload {
   version?: string
   status?: SkillStatus
   openClawSpec?: Skill['openClawSpec']
+  inputSchemaJson?: string
+  outputSchemaJson?: string
+  executionConfigJson?: string
+  promptTemplate?: string
+  requiredContextFields?: string[]
+  estimatedDurationMs?: number
+  retryable?: boolean
+  maxRetries?: number
 }
 
 export type { ApiResponse, ListResult }

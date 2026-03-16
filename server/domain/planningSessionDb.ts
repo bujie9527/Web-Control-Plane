@@ -171,7 +171,13 @@ function rowToSession(row: {
     sourceTemplateId: row.sourceTemplateId ?? undefined,
     entryMode: row.entryMode ?? undefined,
     capabilityPoolSnapshot: row.capabilityPoolSnapshot
-      ? (JSON.parse(row.capabilityPoolSnapshot) as Record<string, unknown>)
+      ? (() => {
+          try {
+            return JSON.parse(row.capabilityPoolSnapshot) as Record<string, unknown>
+          } catch {
+            return undefined
+          }
+        })()
       : undefined,
   }
 }
@@ -270,7 +276,13 @@ function rowToDraft(row: {
     version: row.version,
     summary: row.summary ?? undefined,
     parsedSOP: row.parsedSOP ?? undefined,
-    nodes: JSON.parse(row.nodes) as unknown[],
+    nodes: (() => {
+      try {
+        return JSON.parse(row.nodes) as unknown[]
+      } catch {
+        return []
+      }
+    })(),
     suggestedAgentTemplateIds: row.suggestedAgentTemplateIds
       ? (JSON.parse(row.suggestedAgentTemplateIds) as string[])
       : undefined,
@@ -339,10 +351,17 @@ export async function dbListPlanningMessages(sessionId: string) {
 }
 
 export async function dbGetDraftNodesReferencingAgent(agentTemplateId: string) {
-  const drafts = await prisma.workflowPlanningDraft.findMany()
+  const drafts = await prisma.workflowPlanningDraft.findMany({
+    select: { id: true, sessionId: true, version: true, nodes: true },
+  })
   const result: Array<{ draftId: string; sessionId: string; nodeKey: string; nodeName: string; draftVersion: number }> = []
   for (const d of drafts) {
-    const nodes = JSON.parse(d.nodes) as Array<{ key?: string; name?: string; recommendedAgentTemplateId?: string }>
+    let nodes: Array<{ key?: string; name?: string; recommendedAgentTemplateId?: string }> = []
+    try {
+      nodes = JSON.parse(d.nodes) as typeof nodes
+    } catch {
+      continue
+    }
     for (const n of nodes) {
       if (n.recommendedAgentTemplateId === agentTemplateId) {
         result.push({

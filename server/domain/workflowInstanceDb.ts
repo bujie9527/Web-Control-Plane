@@ -103,11 +103,36 @@ export async function dbUpdateInstance(id: string, payload: Record<string, unkno
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function rowToInstanceNode(row: any) {
   let workerOutputJson: Record<string, unknown> | undefined
+  let skillExecutionLog: Record<string, unknown> | undefined
+  let channelStyleApplied: Record<string, unknown> | undefined
   if (row.workerOutputJson) {
     try {
       workerOutputJson = JSON.parse(row.workerOutputJson) as Record<string, unknown>
     } catch {
       workerOutputJson = undefined
+    }
+  }
+  if (row.skillExecutionLog) {
+    try {
+      skillExecutionLog = JSON.parse(row.skillExecutionLog) as Record<string, unknown>
+    } catch {
+      skillExecutionLog = undefined
+    }
+  }
+  if (row.channelStyleApplied) {
+    try {
+      channelStyleApplied = JSON.parse(row.channelStyleApplied) as Record<string, unknown>
+    } catch {
+      channelStyleApplied = undefined
+    }
+  }
+  let selectedSkillIds: string[] | undefined
+  if (row.selectedSkillIds) {
+    try {
+      const arr = JSON.parse(row.selectedSkillIds) as unknown
+      selectedSkillIds = Array.isArray(arr) ? arr.map(String) : undefined
+    } catch {
+      selectedSkillIds = undefined
     }
   }
   return {
@@ -133,6 +158,10 @@ function rowToInstanceNode(row: any) {
     workerExecutionDurationMs: row.workerExecutionDurationMs ?? undefined,
     workerExecutionAgentId: row.workerExecutionAgentId ?? undefined,
     selectedAgentTemplateId: row.selectedAgentTemplateId ?? undefined,
+    selectedSkillIds,
+    skillExecutionLog,
+    channelType: row.channelType ?? undefined,
+    channelStyleApplied,
     recoveryStatus: row.recoveryStatus ?? undefined,
     lastRecoveryAction: row.lastRecoveryAction ?? undefined,
   }
@@ -199,12 +228,19 @@ export async function dbUpdateInstanceNode(id: string, payload: Record<string, u
     data.workerExecutionAgentId = payload.workerExecutionAgentId as string
   if (payload.selectedAgentTemplateId !== undefined)
     data.selectedAgentTemplateId = payload.selectedAgentTemplateId as string
+  if (payload.selectedSkillIds !== undefined)
+    data.selectedSkillIds = JSON.stringify(payload.selectedSkillIds)
+  if (payload.skillExecutionLog !== undefined)
+    data.skillExecutionLog = JSON.stringify(payload.skillExecutionLog)
+  if (payload.channelType !== undefined) data.channelType = payload.channelType as string
+  if (payload.channelStyleApplied !== undefined)
+    data.channelStyleApplied = JSON.stringify(payload.channelStyleApplied)
   if (payload.recoveryStatus !== undefined) data.recoveryStatus = payload.recoveryStatus as string
   if (payload.lastRecoveryAction !== undefined)
     data.lastRecoveryAction = payload.lastRecoveryAction as string
   const row = await prisma.workflowInstanceNode.update({
     where: { id },
-    data: data as Record<string, string | number>,
+    data: data as Record<string, string | number | null>,
   })
   return rowToInstanceNode(row)
 }

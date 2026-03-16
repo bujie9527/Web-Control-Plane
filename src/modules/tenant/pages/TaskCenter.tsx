@@ -23,7 +23,7 @@ const taskColumns = [
 
 export function TaskCenter() {
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
 
   const [summary, setSummary] = useState({ running: 0, review: 0, failed: 0, done: 0 })
   const [runningTasks, setRunningTasks] = useState<TaskCenterItem[]>([])

@@ -194,13 +194,15 @@ npx prisma migrate deploy
 
 ### 5.2 一键更新脚本（推荐）
 
-项目内已提供脚本，在服务器上使用：
+当前固定标准更新入口（Windows 本机）：
 
-- **Docker**：`./scripts/deploy-update.sh`（需在项目根执行，且已 chmod +x）
-- **PM2**：同上脚本，通过环境变量 `USE_PM2=1` 切换为 PM2 流程
+```powershell
+.\scripts\deploy-to-cloud.ps1 -DryRun
+.\scripts\deploy-to-cloud.ps1
+```
 
-脚本会：拉取最新代码、安装依赖、构建前端与 server、执行迁移（可选）、重启服务。  
-详见 `scripts/README-deploy.md`。
+该脚本采用“增量上传 + 按变更类型最小执行”策略，会自动跳过不必要的 `npm ci/build/restart`，显著快于每次全量流程。  
+详细规则见 `docs/deployment/cloud-update-rules.md`。
 
 ### 5.3 可选：自动部署（CI/CD）
 

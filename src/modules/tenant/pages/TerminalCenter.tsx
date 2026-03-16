@@ -55,7 +55,7 @@ const logColumns = [
 
 export function TerminalCenter() {
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
   const navigate = useNavigate()
 
   const [overview, setOverview] = useState({ total: 0, api: 0, browser: 0, mcp: 0 })

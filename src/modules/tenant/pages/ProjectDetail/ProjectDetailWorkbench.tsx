@@ -125,7 +125,7 @@ export function ProjectDetailWorkbench() {
         )}
         {activeTab === 'goals' && <GoalsKpiTab data={data} />}
         {activeTab === 'channels' && <ChannelsTab data={data} />}
-        {activeTab === 'agentTeam' && <AgentTeamTab data={data} />}
+        {activeTab === 'agentTeam' && <AgentTeamTab data={data} projectId={id} />}
         {activeTab === 'identities' && <IdentityConfigTab data={data} />}
         {activeTab === 'terminals' && <TerminalsTab data={data} />}
         {activeTab === 'resources' && <ProjectResourcesTab data={data} />}

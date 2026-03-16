@@ -91,6 +91,8 @@ export interface AgentTemplate {
   systemPromptTemplate?: string
   instructionTemplate?: string
   outputFormat?: string
+  /** 渠道风格映射（如 telegram_bot / wordpress / facebook_page） */
+  channelStyleProfiles?: Record<string, unknown>
 
   /** Guardrails */
   requireGoalContext: boolean
@@ -152,6 +154,7 @@ export interface CreateAgentTemplatePayload {
   systemPromptTemplate?: string
   instructionTemplate?: string
   outputFormat?: string
+  channelStyleProfiles?: Record<string, unknown>
   requireGoalContext?: boolean
   requireIdentityContext?: boolean
   requireSOPContext?: boolean

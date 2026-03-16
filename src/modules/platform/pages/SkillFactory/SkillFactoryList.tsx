@@ -12,6 +12,7 @@ import {
   getSkillList,
   changeSkillStatus,
   deleteSkill,
+  importOpenClawSkill,
 } from '../../services/skillService'
 import type { Skill, SkillStatus } from '../../schemas/skill'
 import {
@@ -39,6 +40,11 @@ export function SkillFactoryList() {
   const [categoryFilter, setCategoryFilter] = useState('')
   const [loading, setLoading] = useState(false)
   const [notice, setNotice] = useState('')
+  const [importDialogOpen, setImportDialogOpen] = useState(false)
+  const [importContent, setImportContent] = useState('')
+  const [importFormat, setImportFormat] = useState<'auto' | 'json' | 'yaml'>('auto')
+  const [importing, setImporting] = useState(false)
+  const [importError, setImportError] = useState('')
 
   /** 批量选择 */
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -86,6 +92,27 @@ export function SkillFactoryList() {
   const handleQuery = () => {
     setPage(1)
     setSelectedIds(new Set())
+  }
+
+  const handleImportOpenClaw = async () => {
+    if (!importContent.trim()) {
+      setImportError('请输入 OpenClaw JSON/YAML 内容')
+      return
+    }
+    setImporting(true)
+    setImportError('')
+    try {
+      const skill = await importOpenClawSkill({ content: importContent, format: importFormat })
+      showNotice(`已导入 Skill「${skill.nameZh ?? skill.name}」`)
+      setImportDialogOpen(false)
+      setImportContent('')
+      setImportFormat('auto')
+      load()
+    } catch (e) {
+      setImportError(e instanceof Error ? e.message : '导入失败')
+    } finally {
+      setImporting(false)
+    }
   }
 
   /** 全选 / 取消全选 */
@@ -349,13 +376,25 @@ export function SkillFactoryList() {
 
         <ListPageToolbar
           primaryAction={
-            <button
-              type="button"
-              className={listPageStyles.primaryBtn}
-              onClick={() => navigate(ROUTES.SYSTEM.SKILL_FACTORY_NEW)}
-            >
-              新建 Skill
-            </button>
+            <div className={styles.toolbarActions}>
+              <button
+                type="button"
+                className={styles.importBtn}
+                onClick={() => {
+                  setImportError('')
+                  setImportDialogOpen(true)
+                }}
+              >
+                导入 OpenClaw
+              </button>
+              <button
+                type="button"
+                className={listPageStyles.primaryBtn}
+                onClick={() => navigate(ROUTES.SYSTEM.SKILL_FACTORY_NEW)}
+              >
+                新建 Skill
+              </button>
+            </div>
           }
         >
           <input
@@ -471,6 +510,57 @@ export function SkillFactoryList() {
         <p className={styles.confirmText}>
           确定要删除「{deleteTarget?.nameZh ?? deleteTarget?.name}」吗？此操作不可撤销。
         </p>
+      </Dialog>
+
+      <Dialog
+        open={importDialogOpen}
+        onClose={() => {
+          setImportDialogOpen(false)
+          setImportError('')
+        }}
+        title="导入 OpenClaw Skill"
+        width={760}
+        footer={
+          <div className={styles.dialogActions}>
+            <button
+              type="button"
+              className={listPageStyles.primaryBtn}
+              onClick={handleImportOpenClaw}
+              disabled={importing}
+            >
+              {importing ? '导入中...' : '确认导入'}
+            </button>
+            <button
+              type="button"
+              className={listPageStyles.linkBtn}
+              onClick={() => {
+                setImportDialogOpen(false)
+                setImportError('')
+              }}
+            >
+              取消
+            </button>
+          </div>
+        }
+      >
+        {importError && <p className={styles.errorText}>{importError}</p>}
+        <div className={styles.formRow}>
+          <label>格式</label>
+          <select value={importFormat} onChange={(e) => setImportFormat(e.target.value as 'auto' | 'json' | 'yaml')}>
+            <option value="auto">自动识别</option>
+            <option value="json">JSON</option>
+            <option value="yaml">YAML</option>
+          </select>
+        </div>
+        <div className={styles.formRow}>
+          <label>OpenClaw 内容</label>
+          <textarea
+            className={styles.importTextarea}
+            value={importContent}
+            onChange={(e) => setImportContent(e.target.value)}
+            placeholder="粘贴 OpenClaw JSON/YAML 内容"
+          />
+        </div>
       </Dialog>
 
       {/** 批量删除确认 */}

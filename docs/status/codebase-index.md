@@ -1,6 +1,6 @@
 # AI Work Control Center — 代码结构索引
 
-> 基线日期：2026-03-16
+> 基线日期：2026-03-16（由 docs:index 自动同步）
 > 本文档为代码目录树 + 每个目录/关键文件的用途说明。
 
 ---
@@ -137,8 +137,8 @@ platform/
 │   ├── WorkflowPlanning/           # 流程规划会话（List/New/Workbench）
 │   ├── LLMConfigCenter/            # 模型配置中心（三分区页面）
 │   └── PlatformCapabilities/       # 终端能力注册（List/Detail/Tabs）
-├── services/                       # 13 个 service（全部调真实 API）
-├── repositories/                   # 6 个 repository（全部调 /api/*）
+├── services/                       # 14 个 service（全部调真实 API）
+├── repositories/                   # 27 个 repository（全部调 /api/*）
 └── schemas/                        # 6 个 schema 文件
 ```
 
@@ -176,7 +176,7 @@ tenant/
 │   ├── parsers/                    # LLM 输出解析器
 │   └── providers/                  # Provider 封装（openaiProvider）
 ├── repositories/                   # 26 个 repository（全部调 /api/*）
-├── schemas/                        # 23 个 schema 文件
+├── schemas/                        # 24 个 schema 文件
 ├── mock/                           # 33 个 mock 文件（渐进替换中）
 └── projectTypes/                   # 项目类型配置包
     ├── index.ts
@@ -266,7 +266,7 @@ server/
 
 ```
 prisma/
-├── schema.prisma           # 数据模型定义（29 个模型）
+├── schema.prisma           # 数据模型定义（37 个模型）
 ├── seed.ts                 # 种子脚本（调用各 *Seed.ts）
 └── migrations/             # 数据库迁移文件
 ```

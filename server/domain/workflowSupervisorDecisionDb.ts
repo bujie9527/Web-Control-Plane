@@ -20,8 +20,6 @@ export interface WorkflowSupervisorDecisionRow {
   createdAt: string
 }
 
-const now = (): string => new Date().toISOString().slice(0, 19).replace('T', ' ')
-
 function rowToDecision(row: {
   id: string
   instanceId: string

@@ -40,7 +40,8 @@ export async function deleteProvider(id: string): Promise<boolean> {
  * 调用后端 /api/llm/test-provider
  */
 export async function testProviderConnection(
-  id: string
-): Promise<{ ok: boolean; messageZh: string; latencyMs?: number }> {
-  return repo.testProviderConnection(id)
+  id: string,
+  testModelKey?: string
+): Promise<{ ok: boolean; messageZh: string; latencyMs?: number; testModelKey?: string; testModelSource?: 'request' | 'model_config' }> {
+  return repo.testProviderConnection(id, testModelKey)
 }

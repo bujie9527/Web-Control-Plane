@@ -116,6 +116,7 @@ export function LLMConfigCenterPage() {
   const [testTarget, setTestTarget] = useState<LLMProvider | null>(null)
   const [testResult, setTestResult] = useState<Notice>(null)
   const [testLoading, setTestLoading] = useState(false)
+  const [testModelKey, setTestModelKey] = useState('')
 
   // ModelConfig form
   const [configDialogOpen, setConfigDialogOpen] = useState(false)
@@ -470,6 +471,7 @@ export function LLMConfigCenterPage() {
   const openTestProvider = (p: LLMProvider) => {
     setTestTarget(p)
     setTestResult(null)
+    setTestModelKey('')
     setTestDialogOpen(true)
   }
 
@@ -477,8 +479,11 @@ export function LLMConfigCenterPage() {
     if (!testTarget) return
     setTestLoading(true)
     try {
-      const res = await testProviderConnection(testTarget.id)
-      setTestResult({ type: res.ok ? 'success' : 'error', text: res.messageZh })
+      const res = await testProviderConnection(testTarget.id, testModelKey)
+      const modelLine = res.testModelKey
+        ? `（测试模型：${res.testModelKey}${res.testModelSource === 'request' ? '，来源：手动输入' : '，来源：已启用模型配置'}）`
+        : ''
+      setTestResult({ type: res.ok ? 'success' : 'error', text: `${res.messageZh}${modelLine}` })
     } catch (e) {
       setTestResult({ type: 'error', text: e instanceof Error ? e.message : '测试连接失败' })
     } finally {
@@ -1005,7 +1010,7 @@ export function LLMConfigCenterPage() {
           </select>
           <span className={styles.label}>备注</span>
           <textarea className={styles.textarea} value={providerForm.notes} onChange={(e) => setProviderForm((p) => ({ ...p, notes: e.target.value }))} placeholder="可选" />
-          <p className={styles.hint}>测试连接：校验状态、接口地址与关联凭证；Phase 17.7 后可接入真实 API 测试。</p>
+          <p className={styles.hint}>OpenAI 兼容提供商（如百炼 Coding Plan）请填写兼容 Base URL，例如 https://coding.dashscope.aliyuncs.com/v1。</p>
         </div>
       </Dialog>
 
@@ -1033,7 +1038,17 @@ export function LLMConfigCenterPage() {
             {testResult.text}
           </p>
         )}
-        {!testResult && <p className={styles.hint}>将检查：提供商是否启用、是否配置接口地址、是否配置密钥引用。</p>}
+        <div className={styles.formGrid}>
+          <span className={styles.label}>测试模型（可选）</span>
+          <input
+            className={styles.input}
+            value={testModelKey}
+            onChange={(e) => setTestModelKey(e.target.value)}
+            placeholder="例如 qwen3.5-plus / kimi-k2.5"
+          />
+          <p className={styles.hint}>不填时将使用该提供商下“已启用模型配置”的第一条 modelKey；若未配置模型将提示先创建模型配置。</p>
+        </div>
+        {!testResult && <p className={styles.hint}>将检查：提供商是否启用、是否配置接口地址、是否关联可用凭证与模型。</p>}
       </Dialog>
 
       <Dialog

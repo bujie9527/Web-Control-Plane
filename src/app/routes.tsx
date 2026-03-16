@@ -35,6 +35,7 @@ import { TenantWorkflowPlanningWorkbench } from '@/modules/tenant/pages/Workflow
 import { TenantWorkflowRuntimeList } from '@/modules/tenant/pages/WorkflowRuntime/TenantWorkflowRuntimeList'
 import { TenantWorkflowRuntimeDetail } from '@/modules/tenant/pages/WorkflowRuntime/TenantWorkflowRuntimeDetail'
 import { LLMConfigCenterPage } from '@/modules/platform/pages/LLMConfigCenter/LLMConfigCenterPage'
+import { DataSourceConfigCenterPage } from '@/modules/platform/pages/DataSourceConfigCenter/DataSourceConfigCenterPage'
 import { TenantShell } from '@/modules/tenant/TenantShell'
 import { TenantDashboard } from '@/modules/tenant/pages/TenantDashboard'
 import { ProjectList } from '@/modules/tenant/pages/ProjectList'
@@ -59,6 +60,10 @@ import { TerminalDetailWorkbench } from '@/modules/tenant/pages/TerminalCenter/T
 import { FacebookPageAuth } from '@/modules/tenant/pages/FacebookPageAuth'
 import { AnalyticsPage } from '@/modules/tenant/pages/AnalyticsPage'
 import { SystemSettings } from '@/modules/tenant/pages/SystemSettings'
+import { RoutePlaceholderPage } from '@/modules/shared/pages/RoutePlaceholderPage'
+import { TelegramTerminalPage } from '@/modules/tenant/pages/TelegramTerminal/TelegramTerminalPage'
+import { MessageCenterPage } from '@/modules/tenant/pages/MessageCenterPage'
+import { ScheduledTaskPage } from '@/modules/tenant/pages/ScheduledTaskPage'
 
 export function AppRoutes() {
   return (
@@ -108,6 +113,22 @@ export function AppRoutes() {
         <Route path="skill-factory/:id" element={<SkillFactoryDetail />} />
         <Route path="platform-capabilities" element={<PlatformCapabilityList />} />
         <Route path="platform-capabilities/:code" element={<PlatformCapabilityDetail />} />
+        <Route
+          path="datasource-configs"
+          element={<DataSourceConfigCenterPage />}
+        />
+        <Route
+          path="webhooks"
+          element={<RoutePlaceholderPage title="Webhook 管理" description="查看并管理系统级 Webhook 注册、签名与回调状态。" />}
+        />
+        <Route
+          path="message-pipeline"
+          element={<RoutePlaceholderPage title="消息管线监控" description="监控消息接入、路由、处理与发送全链路状态。" />}
+        />
+        <Route
+          path="scheduled-tasks"
+          element={<RoutePlaceholderPage title="定时任务总览" description="跨项目查看调度任务执行情况与失败重试状态。" />}
+        />
         <Route path="workflow-templates" element={<WorkflowTemplateFactoryList />} />
         <Route path="workflow-templates/new" element={<WorkflowTemplateFactoryNew />} />
         <Route path="workflow-templates/:id" element={<WorkflowTemplateFactoryDetail />} />
@@ -136,6 +157,12 @@ export function AppRoutes() {
         <Route path="projects/:id/tasks/:taskId" element={<TaskExecutionPage />} />
         <Route path="projects/:id" element={<ProjectDetailWorkbench />} />
         <Route path="tasks" element={<TaskCenter />} />
+        <Route path="messages" element={<MessageCenterPage />} />
+        <Route path="scheduled-tasks" element={<ScheduledTaskPage />} />
+        <Route
+          path="datasources"
+          element={<RoutePlaceholderPage title="数据源" description="按项目与主题管理可用数据源与采集入口。" />}
+        />
         <Route path="workflows" element={<WorkflowCenter />} />
         <Route path="workflows/templates/:id" element={<WorkflowTemplateDetail />} />
         <Route path="workflow-templates" element={<TenantWorkflowTemplateList />} />
@@ -147,12 +174,16 @@ export function AppRoutes() {
         <Route path="workflow-runtime" element={<TenantWorkflowRuntimeList />} />
         <Route path="workflow-runtime/:id" element={<TenantWorkflowRuntimeDetail />} />
         <Route path="agents" element={<AgentCenter />} />
-        <Route path="agents/identities" element={<IdentityList />} />
-        <Route path="agents/identities/:id" element={<IdentityDetailWorkbench />} />
+        <Route path="identities" element={<IdentityList />} />
+        <Route path="identities/:id" element={<IdentityDetailWorkbench />} />
         <Route path="agents/:id" element={<AgentLibraryDetail />} />
         <Route path="skills" element={<SkillsCenter />} />
         <Route path="skills/:id" element={<SkillsCenterDetail />} />
         <Route path="terminals" element={<TerminalCenter />} />
+        <Route
+          path="terminals/telegram"
+          element={<TelegramTerminalPage />}
+        />
         <Route path="terminals/new" element={<TerminalNewWizard />} />
         <Route path="terminals/:id" element={<TerminalDetailWorkbench />} />
         <Route path="facebook-pages" element={<FacebookPageAuth />} />

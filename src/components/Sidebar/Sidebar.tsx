@@ -1,4 +1,34 @@
 import type { MenuItem } from '@/core/navigation/types'
+import {
+  Activity,
+  ArrowLeft,
+  BarChart3,
+  Bot,
+  Brain,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Database,
+  FolderKanban,
+  GitBranch,
+  LayoutDashboard,
+  Library,
+  MessageSquare,
+  Monitor,
+  MonitorSmartphone,
+  Package,
+  Radio,
+  Route,
+  Settings,
+  Shield,
+  UserCircle,
+  Users,
+  Waypoints,
+  Webhook,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react'
 import styles from './Sidebar.module.css'
 
 interface SidebarProps {
@@ -8,6 +38,40 @@ interface SidebarProps {
   currentPath: string
   onNavigate: (path: string) => void
   title: string
+}
+
+const iconMap: Record<string, LucideIcon> = {
+  Activity,
+  ArrowLeft,
+  BarChart3,
+  Bot,
+  Brain,
+  Building2,
+  Clock,
+  Database,
+  FolderKanban,
+  GitBranch,
+  LayoutDashboard,
+  Library,
+  MessageSquare,
+  Monitor,
+  MonitorSmartphone,
+  Package,
+  Radio,
+  Route,
+  Settings,
+  Shield,
+  UserCircle,
+  Users,
+  Waypoints,
+  Webhook,
+  Zap,
+}
+
+function MenuIcon({ icon }: { icon?: string }) {
+  const Icon = icon ? iconMap[icon] : undefined
+  if (!Icon) return <span className={styles.menuIconPlaceholder} />
+  return <Icon size={16} className={styles.menuIcon} />
 }
 
 export function Sidebar({
@@ -29,7 +93,7 @@ export function Sidebar({
         onClick={onToggleCollapse}
         aria-label={collapsed ? '展开菜单' : '收起菜单'}
       >
-        {collapsed ? '→' : '←'}
+        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
       <nav className={styles.nav}>
         {menuConfig.map((item) => {
@@ -49,8 +113,13 @@ export function Sidebar({
                   type="button"
                   className={`${styles.menuItem} ${parentActive ? styles.active : ''}`}
                   onClick={() => onNavigate(item.path)}
+                  title={collapsed ? item.label : undefined}
                 >
+                  <MenuIcon icon={item.icon} />
                   <span className={styles.menuLabel}>{item.label}</span>
+                  {typeof item.badge === 'number' && item.badge > 0 && (
+                    <span className={styles.menuBadge}>{item.badge}</span>
+                  )}
                 </button>
                 {!collapsed &&
                   item.children.map((child) => {
@@ -69,7 +138,11 @@ export function Sidebar({
                         className={`${styles.menuItem} ${styles.menuItemChild} ${childActive ? styles.active : ''}`}
                         onClick={() => onNavigate(child.path)}
                       >
+                        <MenuIcon icon={child.icon} />
                         <span className={styles.menuLabel}>{child.label}</span>
+                        {typeof child.badge === 'number' && child.badge > 0 && (
+                          <span className={styles.menuBadge}>{child.badge}</span>
+                        )}
                       </button>
                     )
                   })}
@@ -84,8 +157,13 @@ export function Sidebar({
               type="button"
               className={`${styles.menuItem} ${isActive ? styles.active : ''}`}
               onClick={() => onNavigate(item.path)}
+              title={collapsed ? item.label : undefined}
             >
+              <MenuIcon icon={item.icon} />
               <span className={styles.menuLabel}>{item.label}</span>
+              {typeof item.badge === 'number' && item.badge > 0 && (
+                <span className={styles.menuBadge}>{item.badge}</span>
+              )}
             </button>
           )
         })}

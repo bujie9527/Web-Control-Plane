@@ -46,6 +46,7 @@ export function AgentFactoryNew() {
     sceneTags: '',
   })
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([])
+  const [channelStyleProfilesText, setChannelStyleProfilesText] = useState('')
   const [skills, setSkills] = useState<Skill[]>([])
   const [skillsByCategory, setSkillsByCategory] = useState<Record<string, Skill[]>>({})
   const [saving, setSaving] = useState(false)
@@ -75,6 +76,16 @@ export function AgentFactoryNew() {
     if (!formData.code.trim()) { setError('请输入模板编码'); return }
     setSaving(true)
     try {
+      let channelStyleProfiles: Record<string, unknown> | undefined
+      if (channelStyleProfilesText.trim()) {
+        try {
+          channelStyleProfiles = JSON.parse(channelStyleProfilesText) as Record<string, unknown>
+        } catch {
+          setError('渠道风格配置必须是合法 JSON')
+          setSaving(false)
+          return
+        }
+      }
       const payload: CreateAgentTemplatePayload = {
         name: formData.name.trim(),
         code: formData.code.trim().toUpperCase().replace(/\s+/g, '_'),
@@ -86,6 +97,7 @@ export function AgentFactoryNew() {
           ? formData.sceneTags.split(',').map((s) => s.trim()).filter(Boolean)
           : undefined,
         supportedSkillIds: selectedSkillIds.length > 0 ? selectedSkillIds : undefined,
+        channelStyleProfiles,
         defaultExecutorType: 'agent',
       }
       const created = await createTemplate(payload)
@@ -179,6 +191,16 @@ export function AgentFactoryNew() {
               placeholder="描述该 Agent 的能力范围与适用场景"
               rows={3}
             />
+          </div>
+          <div className={styles.formRow}>
+            <label>渠道风格配置（JSON，可选）</label>
+            <textarea
+              value={channelStyleProfilesText}
+              onChange={(e) => setChannelStyleProfilesText(e.target.value)}
+              className={styles.jsonTextarea}
+              placeholder='{"telegram_bot":{"styleInstruction":"300-500字，短段落"}}'
+            />
+            <span className={styles.formHint}>用于按渠道动态注入写作风格（如 telegram_bot / facebook_page）</span>
           </div>
         </div>
       </Card>

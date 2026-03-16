@@ -48,7 +48,7 @@ import styles from './ProjectCreationWizard.module.css'
 export function ProjectCreationWizard() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
   const ownerId = user?.id ?? ''
   const ownerName = user?.name ?? ''
 

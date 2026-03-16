@@ -122,3 +122,19 @@ export async function testConnectionTerminal(_payload: {
 export async function testTerminalById(id: string): Promise<ApiResponse<Terminal | null>> {
   return request<Terminal | null>(`/api/terminals/${id}/test`, { method: 'POST' })
 }
+
+export async function sendTelegramTerminalAction(
+  id: string,
+  payload:
+    | { actionType: 'text'; chatId?: string; text: string }
+    | { actionType: 'photo'; chatId?: string; photoUrl: string; caption?: string }
+    | { actionType: 'poll'; chatId?: string; question: string; options: string[] }
+): Promise<ApiResponse<{ ok: boolean; actionType: string; telegramMessageId: number | null }>> {
+  return request<{ ok: boolean; actionType: string; telegramMessageId: number | null }>(
+    `/api/terminals/${id}/actions/telegram/send`,
+    {
+      method: 'POST',
+      body: payload,
+    }
+  )
+}

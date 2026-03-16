@@ -1,0 +1,676 @@
+{
+  "$schema": "AWCC Design Token Standard v1.0",
+  "$description": "AI Work Control Center 设计标准。参考 Baklib 企业级 SaaS 风格：干净、克制、信息密度适中、大量留白、卡片化布局。适配控制台后台场景。",
+  "$reference": "https://www.baklib.com/",
+
+  "brand": {
+    "name": "AWCC",
+    "nameZh": "AI 工作中控台",
+    "tagline": "AI 运营控制平面",
+    "style": "enterprise-saas",
+    "keywords": ["专业", "克制", "清晰", "可扩展", "信息密度适中"]
+  },
+
+  "colors": {
+    "$description": "参考 Baklib 的冷色调蓝为主色、纯白底为基调、浅灰区分区块、深色侧边栏的配色方案",
+
+    "primary": {
+      "50":  "#eff6ff",
+      "100": "#dbeafe",
+      "200": "#bfdbfe",
+      "300": "#93c5fd",
+      "400": "#60a5fa",
+      "500": "#3b82f6",
+      "600": "#2563eb",
+      "700": "#1d4ed8",
+      "800": "#1e40af",
+      "900": "#1e3a8a",
+      "DEFAULT": "#3b82f6",
+      "hover": "#2563eb",
+      "foreground": "#ffffff"
+    },
+
+    "accent": {
+      "$description": "Baklib 风格的多色分类标记，用于不同模块/类别区分",
+      "indigo":  { "bg": "#eef2ff", "text": "#4338ca", "border": "#c7d2fe" },
+      "violet":  { "bg": "#f5f3ff", "text": "#6d28d9", "border": "#ddd6fe" },
+      "emerald": { "bg": "#ecfdf5", "text": "#059669", "border": "#a7f3d0" },
+      "amber":   { "bg": "#fffbeb", "text": "#d97706", "border": "#fde68a" },
+      "rose":    { "bg": "#fff1f2", "text": "#e11d48", "border": "#fecdd3" },
+      "cyan":    { "bg": "#ecfeff", "text": "#0891b2", "border": "#a5f3fc" }
+    },
+
+    "semantic": {
+      "success":         "#22c55e",
+      "success-light":   "#f0fdf4",
+      "success-border":  "#bbf7d0",
+      "warning":         "#f59e0b",
+      "warning-light":   "#fffbeb",
+      "warning-border":  "#fde68a",
+      "danger":          "#ef4444",
+      "danger-light":    "#fef2f2",
+      "danger-border":   "#fecaca",
+      "info":            "#3b82f6",
+      "info-light":      "#eff6ff",
+      "info-border":     "#bfdbfe"
+    },
+
+    "neutral": {
+      "$description": "Baklib 使用纯白底 + 极浅灰区块的层次感，避免大面积灰色",
+      "background":       "#ffffff",
+      "surface":          "#f8fafc",
+      "surface-elevated": "#ffffff",
+      "muted":            "#f1f5f9",
+      "border":           "#e2e8f0",
+      "border-light":     "#f1f5f9",
+      "input":            "#e2e8f0",
+      "ring":             "#3b82f6",
+      "foreground":       "#0f172a",
+      "foreground-secondary": "#475569",
+      "foreground-muted":    "#94a3b8",
+      "foreground-inverse":  "#ffffff"
+    },
+
+    "sidebar": {
+      "$description": "深色侧边栏，对比页面主体白底，参考 Baklib 深色导航风格",
+      "background":     "#0f1219",
+      "background-hover": "rgba(255, 255, 255, 0.06)",
+      "background-active": "rgba(59, 130, 246, 0.15)",
+      "foreground":     "#94a3b8",
+      "foreground-active": "#60a5fa",
+      "foreground-hover":  "#e2e8f0",
+      "border":         "rgba(255, 255, 255, 0.06)",
+      "group-label":    "#64748b",
+      "logo-text":      "#f1f5f9"
+    },
+
+    "card": {
+      "background":  "#ffffff",
+      "foreground":  "#0f172a",
+      "border":      "#e2e8f0",
+      "shadow":      "0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03)",
+      "shadow-hover": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03)"
+    },
+
+    "chart": {
+      "$description": "数据可视化配色，6色序列 + 对比色",
+      "series": ["#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444"],
+      "grid": "#f1f5f9",
+      "axis": "#94a3b8",
+      "tooltip-bg": "#0f172a",
+      "tooltip-text": "#f8fafc"
+    }
+  },
+
+  "typography": {
+    "$description": "Baklib 使用系统字体栈，中文友好，层次清晰",
+
+    "fontFamily": {
+      "sans": "system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "mono": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace"
+    },
+
+    "fontSize": {
+      "xs":   { "size": "0.75rem",  "lineHeight": "1rem",    "usage": "辅助文字、时间戳、标签内文字" },
+      "sm":   { "size": "0.8125rem","lineHeight": "1.25rem",  "usage": "次要内容、表格单元格" },
+      "base": { "size": "0.875rem", "lineHeight": "1.375rem", "usage": "正文、表单、按钮（14px 基准）" },
+      "lg":   { "size": "1rem",     "lineHeight": "1.5rem",   "usage": "卡片标题、Tab 标签" },
+      "xl":   { "size": "1.125rem", "lineHeight": "1.75rem",  "usage": "页面标题" },
+      "2xl":  { "size": "1.5rem",   "lineHeight": "2rem",     "usage": "指标数字" },
+      "3xl":  { "size": "1.875rem", "lineHeight": "2.25rem",  "usage": "大指标数字、Hero 区" },
+      "4xl":  { "size": "2.25rem",  "lineHeight": "2.5rem",   "usage": "仪表盘核心 KPI" }
+    },
+
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+
+    "letterSpacing": {
+      "$description": "中文不需要额外字距，英文标题略收紧",
+      "tight": "-0.01em",
+      "normal": "0em",
+      "wide": "0.025em"
+    }
+  },
+
+  "spacing": {
+    "$description": "Baklib 风格强调大量留白，区块间距宽松，卡片内衬适中",
+    "unit": "4px",
+
+    "page": {
+      "padding-x": "24px",
+      "padding-y": "24px",
+      "max-width": "1440px"
+    },
+
+    "section": {
+      "gap": "24px",
+      "margin-bottom": "32px"
+    },
+
+    "card": {
+      "padding": "20px",
+      "padding-compact": "16px",
+      "gap-inner": "16px"
+    },
+
+    "form": {
+      "field-gap": "20px",
+      "label-gap": "6px",
+      "group-gap": "28px"
+    },
+
+    "table": {
+      "cell-padding-x": "16px",
+      "cell-padding-y": "12px",
+      "header-padding-y": "10px"
+    },
+
+    "sidebar": {
+      "width-expanded": "240px",
+      "width-collapsed": "64px",
+      "item-padding-x": "12px",
+      "item-padding-y": "8px",
+      "item-gap": "2px",
+      "group-margin-top": "20px"
+    }
+  },
+
+  "radius": {
+    "$description": "Baklib 使用中等圆角，企业感但不过于圆润",
+    "none": "0px",
+    "sm":   "4px",
+    "md":   "6px",
+    "DEFAULT": "8px",
+    "lg":   "10px",
+    "xl":   "12px",
+    "2xl":  "16px",
+    "full": "9999px"
+  },
+
+  "shadows": {
+    "$description": "Baklib 风格极轻阴影，几乎扁平，靠边框和背景色区分层次",
+    "none": "none",
+    "xs":   "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+    "sm":   "0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03)",
+    "md":   "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03)",
+    "lg":   "0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04)",
+    "xl":   "0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
+    "inner": "inset 0 2px 4px 0 rgba(0, 0, 0, 0.03)",
+    "focus-ring": "0 0 0 2px #ffffff, 0 0 0 4px #3b82f6"
+  },
+
+  "borders": {
+    "width": {
+      "DEFAULT": "1px",
+      "2": "2px"
+    },
+    "style": "solid",
+    "color": {
+      "DEFAULT": "#e2e8f0",
+      "light": "#f1f5f9",
+      "dark": "#cbd5e1",
+      "focus": "#3b82f6"
+    }
+  },
+
+  "transitions": {
+    "$description": "Baklib 使用细腻的过渡动画，不突兀",
+    "duration": {
+      "fast": "100ms",
+      "DEFAULT": "150ms",
+      "normal": "200ms",
+      "slow": "300ms"
+    },
+    "easing": {
+      "DEFAULT": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "in": "cubic-bezier(0.4, 0, 1, 1)",
+      "out": "cubic-bezier(0, 0, 0.2, 1)",
+      "bounce": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+
+  "zIndex": {
+    "dropdown": 50,
+    "sticky": 100,
+    "sidebar": 200,
+    "modal-backdrop": 300,
+    "modal": 400,
+    "popover": 500,
+    "tooltip": 600,
+    "toast": 700
+  },
+
+  "components": {
+    "$description": "组件级设计标准，所有新组件必须遵循",
+
+    "button": {
+      "variants": {
+        "primary":     { "bg": "primary-500", "text": "white", "hover": "primary-600", "radius": "md" },
+        "secondary":   { "bg": "white", "text": "foreground", "border": "border", "hover-bg": "muted", "radius": "md" },
+        "ghost":       { "bg": "transparent", "text": "foreground-secondary", "hover-bg": "muted", "radius": "md" },
+        "danger":      { "bg": "danger", "text": "white", "hover": "danger/90", "radius": "md" },
+        "link":        { "bg": "transparent", "text": "primary-500", "hover": "primary-600", "underline": true }
+      },
+      "sizes": {
+        "sm":  { "height": "32px", "padding-x": "12px", "font-size": "sm", "icon-size": "14px" },
+        "md":  { "height": "36px", "padding-x": "16px", "font-size": "base", "icon-size": "16px" },
+        "lg":  { "height": "40px", "padding-x": "20px", "font-size": "base", "icon-size": "18px" }
+      },
+      "rules": [
+        "主操作按钮使用 primary 变体",
+        "次要操作使用 secondary 变体",
+        "行内操作使用 ghost 变体",
+        "删除操作使用 danger 变体",
+        "主操作按钮建议带图标（如 Plus、Save）",
+        "按钮文案使用中文动词（新建、保存、取消、删除）"
+      ]
+    },
+
+    "card": {
+      "$description": "Baklib 风格：浅色底、细边框、极轻阴影、卡片内信息分区清晰",
+      "background": "white",
+      "border": "1px solid #e2e8f0",
+      "radius": "xl",
+      "shadow": "shadows.sm",
+      "padding": "20px",
+      "hover": {
+        "shadow": "shadows.md",
+        "transition": "shadow 200ms ease"
+      },
+      "header": {
+        "font-size": "lg",
+        "font-weight": "semibold",
+        "margin-bottom": "16px",
+        "border-bottom": "1px solid #f1f5f9",
+        "padding-bottom": "12px"
+      },
+      "rules": [
+        "每个语义分组用一个 Card 包裹",
+        "Card 标题区和内容区用细分隔线隔开",
+        "Card 之间间距 24px",
+        "不使用大阴影，保持轻盈感"
+      ]
+    },
+
+    "table": {
+      "$description": "Baklib 定价页风格：清晰的列对齐、斑马纹底色、紧凑但不拥挤",
+      "header": {
+        "background": "#f8fafc",
+        "font-weight": "medium",
+        "font-size": "sm",
+        "color": "foreground-secondary",
+        "text-transform": "none",
+        "border-bottom": "1px solid #e2e8f0"
+      },
+      "row": {
+        "border-bottom": "1px solid #f1f5f9",
+        "hover-bg": "#f8fafc",
+        "transition": "background 100ms ease"
+      },
+      "cell": {
+        "font-size": "sm",
+        "padding": "12px 16px",
+        "vertical-align": "middle"
+      },
+      "rules": [
+        "表头使用浅灰底色与正文区分",
+        "行 hover 使用极浅灰高亮",
+        "操作列固定右侧",
+        "名称列可点击（primary 色 + hover 下划线）",
+        "空表格显示 EmptyState 组件"
+      ]
+    },
+
+    "badge": {
+      "$description": "Baklib 标签风格：软底色 + 文字色对比，圆角胶囊形",
+      "variants": {
+        "success":  { "bg": "#f0fdf4", "text": "#15803d", "border": "none" },
+        "warning":  { "bg": "#fffbeb", "text": "#b45309", "border": "none" },
+        "danger":   { "bg": "#fef2f2", "text": "#dc2626", "border": "none" },
+        "info":     { "bg": "#eff6ff", "text": "#2563eb", "border": "none" },
+        "neutral":  { "bg": "#f1f5f9", "text": "#475569", "border": "none" },
+        "indigo":   { "bg": "#eef2ff", "text": "#4338ca", "border": "none" },
+        "violet":   { "bg": "#f5f3ff", "text": "#6d28d9", "border": "none" }
+      },
+      "size": {
+        "font-size": "xs",
+        "padding": "2px 8px",
+        "radius": "full",
+        "font-weight": "medium"
+      }
+    },
+
+    "dialog": {
+      "backdrop": "rgba(0, 0, 0, 0.4)",
+      "background": "white",
+      "radius": "xl",
+      "shadow": "shadows.xl",
+      "padding": "24px",
+      "max-width": {
+        "sm": "400px",
+        "md": "520px",
+        "lg": "640px"
+      },
+      "header": {
+        "font-size": "lg",
+        "font-weight": "semibold",
+        "margin-bottom": "8px"
+      },
+      "description": {
+        "font-size": "sm",
+        "color": "foreground-secondary",
+        "margin-bottom": "20px"
+      },
+      "footer": {
+        "margin-top": "24px",
+        "gap": "8px",
+        "justify": "flex-end"
+      }
+    },
+
+    "drawer": {
+      "width": {
+        "sm": "360px",
+        "md": "480px",
+        "lg": "640px",
+        "xl": "800px"
+      },
+      "background": "white",
+      "shadow": "shadows.xl",
+      "header": {
+        "padding": "16px 24px",
+        "border-bottom": "1px solid #e2e8f0",
+        "font-size": "lg",
+        "font-weight": "semibold"
+      },
+      "body": {
+        "padding": "24px"
+      },
+      "footer": {
+        "padding": "16px 24px",
+        "border-top": "1px solid #e2e8f0"
+      }
+    },
+
+    "tabs": {
+      "$description": "Baklib 使用底线指示器风格的 Tab",
+      "list": {
+        "border-bottom": "1px solid #e2e8f0",
+        "gap": "0px"
+      },
+      "trigger": {
+        "padding": "8px 16px",
+        "font-size": "sm",
+        "font-weight": "medium",
+        "color": "foreground-secondary",
+        "color-active": "primary-600",
+        "border-bottom-active": "2px solid primary-600",
+        "transition": "color 150ms ease"
+      },
+      "rules": [
+        "Tab 数量 3-8 个",
+        "Tab 名称使用中文",
+        "切换不刷页，用 state 控制",
+        "当前 Tab 底部蓝色指示线"
+      ]
+    },
+
+    "input": {
+      "height": "36px",
+      "padding": "8px 12px",
+      "font-size": "sm",
+      "border": "1px solid #e2e8f0",
+      "radius": "md",
+      "background": "white",
+      "focus": {
+        "border": "1px solid #3b82f6",
+        "ring": "0 0 0 2px rgba(59, 130, 246, 0.15)"
+      },
+      "error": {
+        "border": "1px solid #ef4444",
+        "ring": "0 0 0 2px rgba(239, 68, 68, 0.15)"
+      },
+      "placeholder": {
+        "color": "#94a3b8"
+      }
+    },
+
+    "toast": {
+      "position": "bottom-right",
+      "max-width": "420px",
+      "radius": "lg",
+      "shadow": "shadows.lg",
+      "duration-ms": 4000
+    },
+
+    "tooltip": {
+      "background": "#0f172a",
+      "text": "#f8fafc",
+      "font-size": "xs",
+      "padding": "4px 8px",
+      "radius": "md",
+      "delay-ms": 300
+    },
+
+    "skeleton": {
+      "background": "#f1f5f9",
+      "shimmer": "linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%)",
+      "radius": "md",
+      "animation-duration": "1.5s"
+    },
+
+    "avatar": {
+      "sizes": {
+        "xs": "24px",
+        "sm": "32px",
+        "md": "40px",
+        "lg": "48px"
+      },
+      "radius": "full",
+      "fallback-bg": "#e2e8f0",
+      "fallback-text": "#475569"
+    },
+
+    "metricCard": {
+      "$description": "指标卡片：数字突出 + 趋势箭头 + 对比文字",
+      "padding": "20px",
+      "radius": "xl",
+      "value-font-size": "2xl",
+      "value-font-weight": "bold",
+      "label-font-size": "sm",
+      "label-color": "foreground-secondary",
+      "trend-up-color": "#22c55e",
+      "trend-down-color": "#ef4444",
+      "trend-font-size": "sm"
+    },
+
+    "chatMessage": {
+      "$description": "消息气泡：用户/Bot/系统三种样式",
+      "user":   { "bg": "#eff6ff", "text": "#1e3a8a", "align": "right", "radius": "12px 12px 4px 12px" },
+      "bot":    { "bg": "#f8fafc", "text": "#0f172a", "align": "left",  "radius": "12px 12px 12px 4px" },
+      "system": { "bg": "#fffbeb", "text": "#92400e", "align": "center","radius": "8px" },
+      "max-width": "75%",
+      "padding": "10px 14px",
+      "font-size": "sm"
+    },
+
+    "emptyState": {
+      "icon-size": "48px",
+      "icon-color": "#94a3b8",
+      "title-font-size": "base",
+      "title-font-weight": "medium",
+      "description-font-size": "sm",
+      "description-color": "foreground-muted",
+      "padding": "48px 24px",
+      "rules": [
+        "必须包含引导操作按钮（如「新建」）",
+        "搜索无结果时不显示新建按钮",
+        "图标使用 Lucide 48px 尺寸"
+      ]
+    }
+  },
+
+  "layout": {
+    "$description": "三 Shell 统一布局结构",
+
+    "console": {
+      "sidebar-left": true,
+      "topbar-height": "48px",
+      "content-padding": "24px",
+      "content-max-width": "1440px",
+      "content-bg": "#f8fafc"
+    },
+
+    "listPage": {
+      "$description": "Baklib 风格列表页：顶部工具栏 → 表格 → 分页",
+      "structure": [
+        "PageContainer（页面标题 + 说明）",
+        "ListPageToolbar（新建按钮 + 搜索 + 筛选 + 批量操作）",
+        "Table（含 Checkbox + 行操作）",
+        "Pagination（总数 + 翻页 + 每页条数）"
+      ],
+      "toolbar-gap": "12px",
+      "table-margin-top": "16px",
+      "pagination-margin-top": "16px"
+    },
+
+    "detailWorkbench": {
+      "$description": "Baklib 风格详情工作台：返回条 → 摘要条 → Tab 导航 → Tab 内容",
+      "structure": [
+        "BackBar（返回按钮 + 面包屑）",
+        "HeaderSummaryBar（名称 + 状态 + 关键字段 + 操作按钮）",
+        "Tabs（水平 Tab 导航）",
+        "TabContent（Card 分区）"
+      ],
+      "backbar-height": "40px",
+      "summary-padding": "20px",
+      "tab-content-padding": "24px"
+    },
+
+    "form": {
+      "$description": "表单布局标准",
+      "max-width": "640px",
+      "label-position": "top",
+      "field-gap": "20px",
+      "section-gap": "32px",
+      "submit-position": "bottom-right"
+    }
+  },
+
+  "patterns": {
+    "$description": "设计模式与交互规范",
+
+    "loading": {
+      "list": "Skeleton 骨架屏（3-5 行占位）",
+      "detail": "Skeleton 骨架屏（按真实布局占位）",
+      "action": "按钮 spinner + 文字「保存中...」",
+      "page": "全屏 spinner 居中"
+    },
+
+    "feedback": {
+      "success": "sonner toast（绿色图标 + 中文提示）",
+      "error": "sonner toast（红色图标 + 中文错误）",
+      "warning": "sonner toast（橙色图标 + 中文提示）",
+      "confirm-delete": "Dialog 二次确认（含资源名称 + 危险色按钮）"
+    },
+
+    "navigation": {
+      "list-to-detail": "路由跳转（/resource/:id）",
+      "edit": "Drawer 侧滑（预填数据）",
+      "create": "Drawer 侧滑 或 多步骤向导",
+      "back": "返回条 ← 按钮",
+      "breadcrumb": "返回条内面包屑（如「项目中心 / 演示项目」）"
+    },
+
+    "status-mapping": {
+      "$description": "全局状态色与 Badge 变体映射",
+      "active":     { "badge": "success",  "zh": "启用" },
+      "enabled":    { "badge": "success",  "zh": "已启用" },
+      "completed":  { "badge": "success",  "zh": "已完成" },
+      "running":    { "badge": "info",     "zh": "运行中" },
+      "pending":    { "badge": "neutral",  "zh": "待处理" },
+      "draft":      { "badge": "warning",  "zh": "草稿" },
+      "warning":    { "badge": "warning",  "zh": "警告" },
+      "disabled":   { "badge": "neutral",  "zh": "已停用" },
+      "archived":   { "badge": "neutral",  "zh": "已归档" },
+      "failed":     { "badge": "danger",   "zh": "失败" },
+      "error":      { "badge": "danger",   "zh": "错误" },
+      "deprecated": { "badge": "warning",  "zh": "已废弃" }
+    },
+
+    "iconography": {
+      "library": "lucide-react",
+      "sizes": {
+        "inline": "14px",
+        "button": "16px",
+        "sidebar": "18px",
+        "content": "20px",
+        "empty-state": "48px"
+      },
+      "stroke-width": 1.75,
+      "rules": [
+        "侧边栏菜单每项必须有图标",
+        "主操作按钮建议带图标",
+        "空状态使用 48px 图标",
+        "禁止使用 emoji 替代图标",
+        "图标颜色跟随文字颜色"
+      ]
+    }
+  },
+
+  "responsive": {
+    "$description": "断点定义（后台以桌面优先，预留平板适配）",
+    "breakpoints": {
+      "sm":  "640px",
+      "md":  "768px",
+      "lg":  "1024px",
+      "xl":  "1280px",
+      "2xl": "1536px"
+    },
+    "sidebar": {
+      "auto-collapse-below": "lg",
+      "hide-below": "md"
+    }
+  },
+
+  "a11y": {
+    "$description": "无障碍基线",
+    "contrast-ratio-min": 4.5,
+    "focus-visible": "2px solid #3b82f6, offset 2px",
+    "motion-reduce": "prefers-reduced-motion: reduce → 禁用动画",
+    "font-size-min": "12px"
+  },
+
+  "rules": {
+    "$description": "开发硬性规则，CI 可检查",
+    "must": [
+      "新页面必须使用 Tailwind 类名，不新增 CSS Modules",
+      "新组件必须使用 shadcn/ui 或基于 shadcn 封装",
+      "所有面向用户的文字必须中文",
+      "所有英文枚举必须有中文映射",
+      "操作反馈必须使用 sonner toast",
+      "表单必须使用 react-hook-form + zod",
+      "图标必须使用 Lucide React",
+      "颜色必须引用 design token，不硬编码 hex",
+      "阴影必须使用预定义级别（xs/sm/md/lg），不自定义",
+      "卡片间距必须使用 spacing.section.gap（24px）",
+      "表格行 hover 必须有视觉反馈",
+      "删除操作必须有二次确认弹窗",
+      "空状态必须有引导操作按钮"
+    ],
+    "must_not": [
+      "禁止直接写 style={{}} 内联样式",
+      "禁止使用 !important",
+      "禁止在组件中硬编码中文映射（集中到 labels.ts）",
+      "禁止新增 .module.css 文件",
+      "禁止使用 alert() 替代 toast",
+      "禁止使用 window.confirm() 替代 Dialog",
+      "禁止大阴影（shadow-lg 以上仅弹窗/抽屉使用）",
+      "禁止纯黑(#000)或纯白(#fff)色值（使用 token 中性色）"
+    ]
+  }
+}

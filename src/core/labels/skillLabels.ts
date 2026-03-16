@@ -24,7 +24,8 @@ export const SKILL_CATEGORY_LABELS: Record<string, string> = {
 /** Skill 执行类型标签 */
 export const SKILL_EXECUTION_TYPE_LABELS: Record<SkillExecutionType, string> = {
   llm: 'LLM 执行',
-  tool: '工具/连接器',
+  external_api: '外部 API',
+  internal_api: '内部 API',
   hybrid: '混合',
 }
 

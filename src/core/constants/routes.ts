@@ -37,6 +37,10 @@ export const ROUTES = {
     WORKFLOW_PLANNING_DETAIL: (id: string) => `/system/workflow-planning/${id}`,
     WORKFLOW_RUNTIME: '/system/workflow-runtime',
     WORKFLOW_RUNTIME_DETAIL: (id: string) => `/system/workflow-runtime/${id}`,
+    DATASOURCE_CONFIGS: '/system/datasource-configs',
+    WEBHOOKS: '/system/webhooks',
+    MESSAGE_PIPELINE: '/system/message-pipeline',
+    SCHEDULED_TASKS: '/system/scheduled-tasks',
     /** 平台终端能力注册（替代终端类型工厂） */
     PLATFORM_CAPABILITIES: '/system/platform-capabilities',
     PLATFORM_CAPABILITIES_DETAIL: (code: string) => `/system/platform-capabilities/${code}`,
@@ -55,6 +59,9 @@ export const ROUTES = {
     PROJECT_TASK_EXECUTION: (projectId: string, taskId: string) =>
       `/tenant/projects/${projectId}/tasks/${taskId}`,
     TASKS: '/tenant/tasks',
+    MESSAGES: '/tenant/messages',
+    SCHEDULED_TASKS: '/tenant/scheduled-tasks',
+    DATASOURCES: '/tenant/datasources',
     WORKFLOWS: '/tenant/workflows',
     WORKFLOW_TEMPLATES: '/tenant/workflow-templates',
     WORKFLOW_TEMPLATES_DETAIL: (id: string) => `/tenant/workflow-templates/${id}`,
@@ -69,11 +76,12 @@ export const ROUTES = {
     AGENTS: '/tenant/agents',
     /** 租户 Agent 库详情（只读，平台 AgentTemplate） */
     AGENT_LIBRARY_DETAIL: (id: string) => `/tenant/agents/${id}`,
-    /** 身份库，挂在 Agent 中心下 */
-    IDENTITIES: '/tenant/agents/identities',
+    /** 身份库独立路由 */
+    IDENTITIES: '/tenant/identities',
     SKILLS: '/tenant/skills',
     SKILL_DETAIL: (id: string) => `/tenant/skills/${id}`,
     TERMINALS: '/tenant/terminals',
+    TERMINALS_TELEGRAM: '/tenant/terminals/telegram',
     TERMINAL_NEW: '/tenant/terminals/new',
     TERMINAL_DETAIL: (id: string) => `/tenant/terminals/${id}`,
     /** Facebook 公共主页授权管理（多主页运营） */

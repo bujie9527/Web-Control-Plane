@@ -86,7 +86,7 @@ export function WorkflowTemplateFactoryForm({
     description: initial?.description ?? '',
     type: initial?.type ?? 'custom',
     scopeType: initial?.scopeType ?? 'system',
-    tenantId: initial?.tenantId ?? 't1',
+    tenantId: initial?.tenantId ?? '',
     status: initial?.status ?? 'draft',
     isSystemPreset: initial?.isSystemPreset ?? false,
     supportedProjectTypeId: initial?.supportedProjectTypeId ?? '',

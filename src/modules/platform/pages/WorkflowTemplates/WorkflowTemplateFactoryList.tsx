@@ -52,7 +52,7 @@ export function WorkflowTemplateFactoryList() {
 
   const [cloneOpen, setCloneOpen] = useState(false)
   const [cloneTarget, setCloneTarget] = useState<WorkflowTemplate | null>(null)
-  const [cloneTenantId, setCloneTenantId] = useState('t1')
+  const [cloneTenantId, setCloneTenantId] = useState('')
   const [cloneError, setCloneError] = useState('')
   const [cloneLoading, setCloneLoading] = useState(false)
 

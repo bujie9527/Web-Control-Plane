@@ -270,6 +270,10 @@ model WorkflowInstanceNode {
   workerExecutionDurationMs Int?
   workerExecutionAgentId   String?
   selectedAgentTemplateId  String?
+  selectedSkillIds         String?  // JSON array
+  skillExecutionLog        String?  // JSON object
+  channelType              String?
+  channelStyleApplied      String?  // JSON object
   recoveryStatus           String?
   lastRecoveryAction       String?
 
@@ -333,6 +337,7 @@ model AgentTemplate {
   systemPromptTemplate        String?
   instructionTemplate         String?
   outputFormat                String?
+  channelStyleProfiles        String?  // JSON
   requireGoalContext          Boolean  @default(false)
   requireIdentityContext      Boolean  @default(false)
   requireSOPContext           Boolean  @default(false)
@@ -353,6 +358,23 @@ model AgentTemplate {
   updatedAt                   String
 }
 
+model ProjectAgentConfig {
+  id                    String   @id @default(cuid())
+  projectId             String
+  agentTemplateId       String
+  instructionOverride   String?
+  channelStyleOverride  String?  // JSON
+  temperatureOverride   Float?
+  maxTokensOverride     Int?
+  modelConfigIdOverride String?
+  customParams          String?  // JSON
+  isEnabled             Boolean  @default(true)
+  createdAt             String
+  updatedAt             String
+
+  @@unique([projectId, agentTemplateId])
+}
+
 // ─── 批次 7：Skill（平台级能力资产）─────────────────────────────────────────────
 
 model Skill {
@@ -361,12 +383,20 @@ model Skill {
   nameZh           String?
   code             String   @unique
   category         String
-  executionType    String   // llm | tool | hybrid
+  executionType    String   // llm | external_api | internal_api | hybrid
   description      String?
   version          String   @default("1.0.0")
   status           String   @default("active")
   isSystemPreset   Boolean  @default(false)
   openClawSpecJson String?  // JSON
+  inputSchemaJson  String?  // JSON Schema
+  outputSchemaJson String?  // JSON Schema
+  executionConfigJson String? // JSON
+  promptTemplate   String?
+  requiredContextFields String? // JSON array
+  estimatedDurationMs Int?
+  retryable        Boolean  @default(true)
+  maxRetries       Int      @default(1)
   createdAt        String
   updatedAt        String
 }
@@ -423,6 +453,47 @@ model AgentLLMBinding {
   updatedAt       String
 
   modelConfig LLMModelConfig @relation(fields: [modelConfigId], references: [id], onDelete: Cascade)
+}
+
+// ─── 批次 10：数据源配置中心（DataSource Provider / Credential / Config）──────────
+
+model DataSourceCredential {
+  id              String   @id
+  name            String
+  nameZh          String?
+  providerType    String
+  encryptedSecret String
+  secretMasked    String
+  status          String   @default("active")
+  notes           String?
+  createdAt       String
+  updatedAt       String
+}
+
+model DataSourceProvider {
+  id             String   @id
+  name           String
+  nameZh         String?
+  providerType   String   // tavily | apify | jina_reader | rss
+  baseUrl        String?
+  credentialId   String?
+  status         String   @default("active")
+  isSystemPreset Boolean  @default(false)
+  notes          String?
+  createdAt      String
+  updatedAt      String
+}
+
+model DataSourceConfig {
+  id            String   @id
+  providerId    String
+  tenantId      String?
+  configJson    String?  // JSON string
+  rateLimitJson String?  // JSON string
+  status        String   @default("active")
+  notes         String?
+  createdAt     String
+  updatedAt     String
 }
 
 // ─── 批次 9：项目领域补全（ProjectIdentityBinding / Deliverable / ResourceConfig）───
@@ -494,6 +565,113 @@ model WorkflowPublishRecord {
   publishedBy      String
   publishedAt      String
   notes            String?
+}
+
+// ─── 批次 11：消息管线 + 调度 + 汇报────────────────────────────────────────────
+
+model Conversation {
+  id               String   @id @default(cuid())
+  tenantId         String
+  terminalId       String?
+  channelType      String
+  externalChatId   String
+  title            String?
+  latestMessageAt  String?
+  unreadCount      Int      @default(0)
+  createdAt        String
+  updatedAt        String
+
+  @@unique([tenantId, channelType, externalChatId])
+}
+
+model IncomingMessage {
+  id                String   @id @default(cuid())
+  tenantId          String
+  terminalId        String?
+  conversationId    String?
+  channelType       String
+  externalMessageId String?
+  senderExternalId  String?
+  senderName        String?
+  messageType       String   // text | photo | video | command | system
+  contentText       String?
+  payloadJson       String?  // JSON
+  status            String   @default("pending") // pending | routed | ignored | processed | failed
+  routeTarget       String?  // interaction | community | config | none
+  processedAt       String?
+  createdAt         String
+  updatedAt         String
+}
+
+model OutgoingMessage {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  terminalId            String?
+  conversationId        String?
+  channelType           String
+  targetExternalChatId  String?
+  contentText           String?
+  payloadJson           String?  // JSON
+  sourceType            String   // workflow | interaction | community | manual
+  sourceRefId           String?
+  status                String   @default("pending") // pending | sent | failed
+  externalMessageId     String?
+  errorMessage          String?
+  sentAt                String?
+  createdAt             String
+  updatedAt             String
+}
+
+model ScheduledTask {
+  id                String   @id @default(cuid())
+  tenantId          String
+  projectId         String?
+  name              String
+  description       String?
+  cronExpr          String?
+  runAt             String?
+  timezone          String?
+  targetType        String   // workflow_instance | skill_execution | system
+  targetRefId       String?
+  payloadJson       String?  // JSON
+  status            String   @default("active") // active | paused | completed | failed
+  lastRunAt         String?
+  nextRunAt         String?
+  failCount         Int      @default(0)
+  maxFailCount      Int      @default(3)
+  createdAt         String
+  updatedAt         String
+
+  executions        ScheduledTaskExecution[]
+}
+
+model ScheduledTaskExecution {
+  id                String        @id @default(cuid())
+  taskId            String
+  task              ScheduledTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  status            String   // running | succeeded | failed
+  startedAt         String
+  finishedAt        String?
+  triggerSource     String   // scheduler | manual
+  resultSummary     String?
+  errorSummary      String?
+  createdAt         String
+  updatedAt         String
+}
+
+model ProjectReport {
+  id                    String   @id @default(cuid())
+  projectId             String
+  tenantId              String
+  periodType            String   // daily | weekly | monthly | custom
+  periodStart           String
+  periodEnd             String
+  summaryJson           String?  // JSON
+  kpiJson               String?  // JSON
+  generatedBy           String?
+  generatedAt           String
+  createdAt             String
+  updatedAt             String
 }
 
 // ─── 认证（迭代五）────────────────────────────────────────────────────────────

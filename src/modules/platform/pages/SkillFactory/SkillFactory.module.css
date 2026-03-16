@@ -7,6 +7,26 @@
   font-size: 14px;
 }
 
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.importBtn {
+  padding: 7px 12px;
+  font-size: 13px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  background: #fff;
+  color: #1a73e8;
+  cursor: pointer;
+}
+
+.importBtn:hover {
+  background: #f5f8ff;
+}
+
 .batchBar {
   display: flex;
   align-items: center;
@@ -88,6 +108,11 @@
   font-size: 14px;
   border: 1px solid #dadce0;
   border-radius: 4px;
+}
+
+.importTextarea {
+  min-height: 220px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* ===== Workbench 详情页专用样式 ===== */

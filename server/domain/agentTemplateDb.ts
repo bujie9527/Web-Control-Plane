@@ -15,6 +15,16 @@ function parseJsonArray(s: string | null): string[] {
   }
 }
 
+function parseJsonObject<T extends Record<string, unknown>>(s: string | null): T | undefined {
+  if (!s) return undefined
+  try {
+    const o = JSON.parse(s) as unknown
+    return o && typeof o === 'object' ? (o as T) : undefined
+  } catch {
+    return undefined
+  }
+}
+
 const VALID_PLATFORM_TYPES = new Set<string>([
   'general',
   'facebook',
@@ -34,6 +44,7 @@ function rowToAgentTemplate(row: any) {
   const allowedExecutorTypes = parseJsonArray(row.allowedExecutorTypes)
   const allowedTerminalTypes = parseJsonArray(row.allowedTerminalTypes)
   const fallbackModelKeys = parseJsonArray(row.fallbackModelKeys)
+  const channelStyleProfiles = parseJsonObject<Record<string, unknown>>(row.channelStyleProfiles ?? null)
 
   const rawPlatform = row.platformType ?? undefined
   const platformType =
@@ -81,6 +92,7 @@ function rowToAgentTemplate(row: any) {
     systemPromptTemplate: row.systemPromptTemplate ?? undefined,
     instructionTemplate: row.instructionTemplate ?? undefined,
     outputFormat: row.outputFormat ?? undefined,
+    channelStyleProfiles: channelStyleProfiles ?? undefined,
     requireGoalContext: row.requireGoalContext ?? false,
     requireIdentityContext: row.requireIdentityContext ?? false,
     requireSOPContext: row.requireSOPContext ?? false,
@@ -133,6 +145,7 @@ export interface CreateAgentTemplatePayload {
   systemPromptTemplate?: string
   instructionTemplate?: string
   outputFormat?: string
+  channelStyleProfiles?: Record<string, unknown>
   requireGoalContext?: boolean
   requireIdentityContext?: boolean
   requireSOPContext?: boolean
@@ -243,6 +256,9 @@ export async function dbCreateAgentTemplate(
       systemPromptTemplate: payload.systemPromptTemplate ?? null,
       instructionTemplate: payload.instructionTemplate ?? null,
       outputFormat: payload.outputFormat ?? null,
+      channelStyleProfiles: payload.channelStyleProfiles
+        ? JSON.stringify(payload.channelStyleProfiles)
+        : null,
       requireGoalContext: payload.requireGoalContext ?? true,
       requireIdentityContext: payload.requireIdentityContext ?? true,
       requireSOPContext: payload.requireSOPContext ?? false,
@@ -325,6 +341,11 @@ export async function dbUpdateAgentTemplate(
   for (const key of arrayFields) {
     if (payload[key] !== undefined)
       data[key] = Array.isArray(payload[key]) ? JSON.stringify(payload[key]) : null
+  }
+  if (payload.channelStyleProfiles !== undefined) {
+    data.channelStyleProfiles = payload.channelStyleProfiles
+      ? JSON.stringify(payload.channelStyleProfiles)
+      : null
   }
   for (const key of stringFields) {
     if (payload[key] !== undefined) data[key] = payload[key]
@@ -410,11 +431,36 @@ export async function dbChangeAgentTemplateStatus(
 }
 
 export async function dbDeleteAgentTemplate(id: string): Promise<boolean> {
-  const row = await prisma.agentTemplate.findUnique({ where: { id }, select: { isSystemPreset: true } })
+  const row = await prisma.agentTemplate.findUnique({
+    where: { id },
+    select: { isSystemPreset: true },
+  })
   if (!row) return false
   if (row.isSystemPreset) {
     throw new Error('系统预置模板不可删除')
   }
+
+  const [templateNodeRefs, runningInstanceNodeRefs, projectConfigRefs] = await Promise.all([
+    prisma.workflowTemplateNode.count({ where: { recommendedAgentTemplateId: id } }),
+    prisma.workflowInstanceNode.count({
+      where: {
+        selectedAgentTemplateId: id,
+        status: { in: ['pending', 'running', 'waiting_review'] },
+      },
+    }),
+    prisma.projectAgentConfig.count({ where: { agentTemplateId: id } }),
+  ])
+
+  if (templateNodeRefs > 0) {
+    throw new Error(`该模板被 ${templateNodeRefs} 个流程节点引用，请先解绑后再删除`)
+  }
+  if (runningInstanceNodeRefs > 0) {
+    throw new Error(`该模板有 ${runningInstanceNodeRefs} 个运行中的流程实例，请等待完成或终止后再删除`)
+  }
+  if (projectConfigRefs > 0) {
+    throw new Error(`该模板被 ${projectConfigRefs} 个项目使用，请先移除项目绑定`)
+  }
+
   await prisma.agentLLMBinding.deleteMany({ where: { agentTemplateId: id } })
   await prisma.agentTemplate.delete({ where: { id } })
   return true

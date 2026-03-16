@@ -1,0 +1,91 @@
+.sections {
+  display: grid;
+  gap: 16px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.actions {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.notice {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.success {
+  background: #ecfdf3;
+  color: #166534;
+}
+
+.error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.primaryBtn {
+  border: 1px solid #1d4ed8;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.ghostBtn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.label {
+  color: #334155;
+  font-size: 13px;
+}
+
+.input,
+.select,
+.textarea,
+.textareaLarge {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.textarea {
+  min-height: 82px;
+  resize: vertical;
+}
+
+.textareaLarge {
+  min-height: 180px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+}

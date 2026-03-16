@@ -47,6 +47,7 @@ export function AgentFactoryEdit() {
     sceneTags: '',
   })
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([])
+  const [channelStyleProfilesText, setChannelStyleProfilesText] = useState('')
   const [skills, setSkills] = useState<Skill[]>([])
   const [skillsByCategory, setSkillsByCategory] = useState<Record<string, Skill[]>>({})
   const [loading, setLoading] = useState(true)
@@ -71,6 +72,9 @@ export function AgentFactoryEdit() {
           sceneTags: template.sceneTags?.join(', ') ?? '',
         })
         setSelectedSkillIds(template.supportedSkillIds ?? [])
+        setChannelStyleProfilesText(
+          template.channelStyleProfiles ? JSON.stringify(template.channelStyleProfiles, null, 2) : ''
+        )
       }
       setSkills(skillRes.items)
       const grouped: Record<string, Skill[]> = {}
@@ -95,6 +99,16 @@ export function AgentFactoryEdit() {
     if (!formData.name.trim()) { setError('请输入模板名称'); return }
     setSaving(true)
     try {
+      let channelStyleProfiles: Record<string, unknown> | undefined
+      if (channelStyleProfilesText.trim()) {
+        try {
+          channelStyleProfiles = JSON.parse(channelStyleProfilesText) as Record<string, unknown>
+        } catch {
+          setError('渠道风格配置必须是合法 JSON')
+          setSaving(false)
+          return
+        }
+      }
       await updateTemplate(id, {
         name: formData.name.trim(),
         nameZh: formData.nameZh.trim() || undefined,
@@ -106,6 +120,7 @@ export function AgentFactoryEdit() {
           ? formData.sceneTags.split(',').map((s) => s.trim()).filter(Boolean)
           : undefined,
         supportedSkillIds: selectedSkillIds.length > 0 ? selectedSkillIds : undefined,
+        channelStyleProfiles,
       })
       navigate(ROUTES.SYSTEM.AGENT_FACTORY_DETAIL(id))
     } catch (e) {
@@ -204,6 +219,16 @@ export function AgentFactoryEdit() {
               onChange={(e) => setFormData((d) => ({ ...d, description: e.target.value }))}
               rows={3}
             />
+          </div>
+          <div className={styles.formRow}>
+            <label>渠道风格配置（JSON，可选）</label>
+            <textarea
+              value={channelStyleProfilesText}
+              onChange={(e) => setChannelStyleProfilesText(e.target.value)}
+              className={styles.jsonTextarea}
+              placeholder='{"telegram_bot":{"styleInstruction":"300-500字，短段落"}}'
+            />
+            <span className={styles.formHint}>用于按渠道动态注入写作风格（如 telegram_bot / facebook_page）</span>
           </div>
         </div>
       </Card>

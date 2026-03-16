@@ -5,48 +5,64 @@ alwaysApply: true
 # 开发进度追踪规则
 
 ## 目标
-确保每次开发完成后，系统文档保持最新。
+确保每次开发完成后，系统文档保持最新。通过自动化脚本降低人工维护成本。
 
-## 必须执行的更新
+---
 
-每次完成功能开发、Bug 修复、架构调整后，必须更新以下文档：
+## 开发完成后的标准流程
 
-### 1. CHANGELOG（必须）
-文件：`docs/status/CHANGELOG.md`
+### 第一步：自动生成 CHANGELOG 草稿（必须）
 
-在文件顶部（在格式说明之后）追加新条目，格式：
-```
-## [YYYY-MM-DD] 变更标题
-### 变更内容
-- 具体变更项
-### 影响范围
-- 影响的模块/文件
-### 方向调整（如有）
-### 代码结构变化（如有）
+```bash
+npm run docs:log
 ```
 
-### 2. 已完成功能清单（按需）
-文件：`docs/status/completed-features.md`
+此命令会：
+1. 读取 git 已修改文件（staged → unstaged → 最近提交）
+2. 按模块自动分组
+3. 在 `docs/status/CHANGELOG.md` 顶部插入草稿条目（含文件列表）
 
-当新增功能模块、完成 mock→真实数据迁移、或骨架页面真实化时，更新对应模块状态。
+**执行后**：打开 `docs/status/CHANGELOG.md`，填写：
+- `← 填写本次变更标题`（简短说明，如"LLM 测试模型优化"）
+- `← 填写具体变更说明`（每条一行，说明做了什么、为什么）
 
-### 3. 产品蓝图（按需）
-文件：`docs/status/product-blueprint.md`
+### 第二步：同步代码结构索引（按需）
 
-当待开发项完成后，更新差距分析表中的对应行。
+```bash
+npm run docs:index
+```
 
-### 4. 代码索引（按需）
-文件：`docs/status/codebase-index.md`
+当新增/删除了目录、文件数量有较大变化时运行。此命令会：
+- 更新 `docs/status/codebase-index.md` 中的统计数字
+- 更新 scripts/ 文件列表
+- 更新同步日期
 
-当新增目录、重命名模块、或新增重要文件时，更新目录结构说明。
+### 或一键执行两步（推荐）
 
-### 5. 系统架构（按需）
-文件：`docs/status/system-architecture.md`
+```bash
+npm run docs:update
+```
 
-当架构发生重大变化（新增 Shell、新增数据库模型、新增 API 资源域）时更新。
+等同于 `docs:log && docs:index`，适合每次开发完成后统一运行。
+
+---
+
+## 按需手动更新的文档
+
+| 文档 | 更新时机 |
+|------|----------|
+| `docs/status/completed-features.md` | 新功能上线、mock→真实数据迁移完成时 |
+| `docs/status/product-blueprint.md` | 待开发项完成时，更新差距分析表 |
+| `docs/status/codebase-index.md` | 新增模块/目录说明时（运行 docs:index 更新统计，描述需手动补充） |
+| `docs/status/system-architecture.md` | 架构重大变化（新增 Shell、新 API 资源域、数据库大改动）时 |
+| `docs/development/00-development-roadmap.md` | 阶段完成/新增开发目标时，更新路线图状态 |
+| `docs/development/13-errata-and-conventions.md` | 新增 Agent/Skill/Prisma 模型/API 约定时，更新权威清单 |
+
+---
 
 ## 禁止事项
 
-- 禁止跳过 CHANGELOG 更新
-- 禁止在 docs/archive/ 中修改已归档文档
-- 禁止创建新的 phase-N-*.md 格式的散落文档（统一使用 CHANGELOG）
+- 禁止跳过 CHANGELOG 更新（每次开发必须有记录）
+- 禁止在 `docs/archive/` 中修改已归档文档
+- 禁止创建新的 `phase-N-*.md` 格式散落文档（统一使用 CHANGELOG）
+- 禁止手工拼写 CHANGELOG 条目时遗漏"影响范围"（让 `docs:log` 自动填写文件列表）

@@ -6,6 +6,7 @@ export interface MenuItem {
   path: string
   label: string
   icon?: string
+  badge?: number
   /** true = 不可点击的分组标题，不参与路由匹配 */
   isGroupLabel?: boolean
   children?: MenuItem[]

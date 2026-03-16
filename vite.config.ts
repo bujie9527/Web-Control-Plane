@@ -14,6 +14,9 @@ export default defineConfig({
   },
   server: {
     host: true,
+    watch: {
+      ignored: ['**/deploy/tmp_awcc/**', '**/.cursor/**', '**/agent-transcripts/**'],
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3001',

@@ -2,8 +2,39 @@
  * 服务端 LLM 数据（从 Prisma 读取，替代 serverStore 硬编码）
  * Phase A：Provider / ModelConfig / AgentLLMBinding 从 DB 读取
  */
-import type { ServerProvider, ServerModelConfig, ServerBinding } from './serverStore'
 import * as llmConfigDb from '../domain/llmConfigDb'
+
+export interface ServerProvider {
+  id: string
+  name: string
+  nameZh: string
+  providerType: string
+  baseUrl?: string
+  credentialId?: string
+  status: string
+}
+
+export interface ServerModelConfig {
+  id: string
+  name: string
+  nameZh: string
+  providerId?: string
+  modelKey: string
+  isEnabled: boolean
+  temperature: number
+  maxTokens: number
+  timeoutMs: number
+  retryCount: number
+  structuredOutputMode: string
+}
+
+export interface ServerBinding {
+  id: string
+  agentTemplateId: string
+  modelConfigId: string
+  bindingType: string
+  isEnabled: boolean
+}
 
 /** 从 DB 获取 Provider（按 id） */
 export async function getProviderByIdFromDb(id: string): Promise<ServerProvider | null> {

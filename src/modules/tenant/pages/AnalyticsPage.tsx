@@ -4,7 +4,6 @@ import { Card } from '@/components/Card/Card'
 import { Table } from '@/components/Table/Table'
 import { useAuth } from '@/core/auth/AuthContext'
 import { getAnalyticsData, type AnalyticsOverviewItem, type AnalyticsProjectStat } from '../services/analyticsService'
-import styles from './SkeletonPages.module.css'
 
 const projectStatColumns = [
   { key: 'name', title: '项目名称', width: '160px' },
@@ -14,7 +13,7 @@ const projectStatColumns = [
 
 export function AnalyticsPage() {
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
   const [overview, setOverview] = useState<AnalyticsOverviewItem[]>([])
   const [projectStats, setProjectStats] = useState<AnalyticsProjectStat[]>([])
   const [loading, setLoading] = useState(true)
@@ -46,36 +45,34 @@ export function AnalyticsPage() {
     >
       <Card title="数据总览" description="核心指标概览">
         {error ? (
-          <p className={styles.placeholder} style={{ color: 'var(--color-error, #c5221f)' }}>
+          <p className="text-red-600 text-sm">
             {error}
-            <button type="button" onClick={load} className={styles.placeholder} style={{ marginLeft: 12, cursor: 'pointer', textDecoration: 'underline' }}>
-              重试
-            </button>
+            <button type="button" onClick={load} className="ml-3 underline cursor-pointer">重试</button>
           </p>
         ) : loading ? (
-          <p className={styles.placeholder}>加载中...</p>
+          <p className="text-gray-400 text-sm py-4">加载中...</p>
         ) : (
-          <div className={styles.kvList}>
+          <div className="flex flex-wrap gap-6">
             {overview.map((o) => (
-              <span key={o.key}>{o.key}：{o.value}</span>
+              <span key={o.key} className="text-sm text-gray-700">{o.key}：<span className="font-semibold">{o.value}</span></span>
             ))}
           </div>
         )}
       </Card>
       <Card title="项目分析" description="各项目任务完成情况">
         {error ? (
-          <p className={styles.placeholder} style={{ color: 'var(--color-error, #c5221f)' }}>
+          <p className="text-red-600 text-sm">
             {error}
-            <button type="button" onClick={load} style={{ marginLeft: 12, cursor: 'pointer', textDecoration: 'underline' }}>重试</button>
+            <button type="button" onClick={load} className="ml-3 underline cursor-pointer">重试</button>
           </p>
         ) : loading ? (
-          <p className={styles.placeholder}>加载中...</p>
+          <p className="text-gray-400 text-sm py-4">加载中...</p>
         ) : (
           <Table columns={projectStatColumns} dataSource={projectStats} rowKey="name" emptyText="暂无数据" />
         )}
       </Card>
       <Card title="任务分析 / Agent 分析 / Skill 分析" description="本模块将在后续完善">
-        <p className={styles.placeholder}>任务分析、Agent 调用分析与 Skill 使用分析将在后续迭代中开放。</p>
+        <p className="text-gray-400 text-sm py-4">任务分析、Agent 调用分析与 Skill 使用分析将在后续迭代中开放。</p>
       </Card>
     </PageContainer>
   )

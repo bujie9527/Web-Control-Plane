@@ -8,21 +8,52 @@ alwaysApply: true
 
 本系统是：
 
-企业级 AI 控制台后台。
+企业级 AI 控制台后台。参考 [Baklib](https://www.baklib.com/) 企业级 SaaS 风格。
 
 风格必须：
 
-- 专业
-- 克制
-- 清晰
-- 长期可扩展
+- 专业、克制、清晰、长期可扩展
+- 纯白主体 + 极浅灰(#f8fafc)分区
+- 冷色调蓝为主色，不滥用色彩
+- 极轻阴影，靠边框和背景色区分层次
+- 大量留白，信息密度适中
 
-不是：
+不是：营销网站 / 花哨 Dashboard / 数据大屏 / 视觉实验
 
-- 营销网站
-- 花哨 Dashboard
-- 数据大屏
-- 视觉实验
+---
+
+## 技术栈（新标准）
+
+| 工具 | 用途 |
+|------|------|
+| **Tailwind CSS v4** | 原子化样式，替代 CSS Modules |
+| **shadcn/ui** | UI 组件库（源码复制到项目内） |
+| **Lucide React** | 图标库（1000+ SVG 图标） |
+| **Recharts** | 数据可视化图表 |
+| **react-hook-form + zod** | 表单管理与校验 |
+| **sonner** | Toast 通知 |
+| **@tanstack/react-table** | 高级表格 |
+
+**Design Token 权威来源**：`src/core/design/design-tokens.json`（色彩、间距、圆角、阴影、组件规范）
+
+---
+
+## 组件使用规则
+
+新增页面必须使用 shadcn/ui 组件 + Tailwind 类名：
+
+- **Button**：5 变体（primary / secondary / ghost / danger / link）
+- **Card**：白底 + 1px #e2e8f0 边框 + 极轻阴影 + 20px 内衬
+- **Table**：浅灰表头 + hover 行高亮 + 操作列固定右侧
+- **Badge**：软底色胶囊标签（success/warning/danger/info/neutral）
+- **Dialog**：弹窗确认（删除等危险操作）
+- **Sheet**：侧滑抽屉（编辑、新建）
+- **Tabs**：底线指示器风格，state 控制切换
+- **Input/Select/Checkbox/Switch**：统一 shadcn 表单组件
+- **Skeleton**：加载态骨架屏
+- **Tooltip**：操作按钮提示
+
+图标统一使用 Lucide React，禁止 emoji 替代。
 
 ---
 
@@ -30,23 +61,40 @@ alwaysApply: true
 
 统一后台布局：
 
-- 左侧：侧边导航
+- 左侧：侧边导航（深色 #0f1219，Lucide 图标，折叠模式只显示图标 + tooltip）
 - 顶部：操作栏
-- 中间：主内容区
+- 中间：主内容区（背景 #f8fafc）
 - 右侧：抽屉 / 辅助面板
+
+---
+
+## 色彩规范
+
+| 用途 | 色值 |
+|------|------|
+| 主色 | #3b82f6（primary-500） |
+| 成功 | #22c55e（启用、完成） |
+| 警告 | #f59e0b（草稿、警告） |
+| 危险 | #ef4444（失败、错误） |
+| 正文 | #0f172a |
+| 次要文字 | #475569 |
+| 辅助文字 | #94a3b8 |
+| 边框 | #e2e8f0 |
+| 内容区底色 | #f8fafc |
+| 侧边栏底色 | #0f1219 |
+
+颜色必须引用 design token，禁止硬编码 hex 值到组件中。
 
 ---
 
 ## 侧边栏设计
 
-要求：
-
-- 深色背景
-- 专业 SaaS 风格
-- 一级菜单清晰
-- 图标统一
-- 支持折叠
-- 当前菜单高亮明显
+- 深色背景 #0f1219
+- 每个菜单项必须有 Lucide 图标
+- 支持分组标签（如「业务运营」「流程与任务」）
+- 折叠模式：只显示图标，hover 显示 tooltip
+- 当前菜单蓝色高亮 #60a5fa
+- 支持 badge 徽标（消息中心未读数）
 
 ---
 
@@ -62,47 +110,21 @@ alwaysApply: true
 
 ---
 
-## 页面组件统一
-
-统一组件：
-
-- 表格
-- 卡片
-- 状态标签
-- 抽屉
-- 弹窗
-- 空状态
-- 指标卡
-
----
-
 ## 项目详情页原则
 
-项目详情页是：
+项目详情页是**工作台**，不是普通详情页。
 
-**工作台**
-
-而不是：
-
-普通详情页。
-
-必须支持：
-
-- 概览
-- 目标
-- 渠道
-- Agent团队
-- 终端
-- 流程任务
-- 结果
-- 设置
+必须支持 Tab：概览 / 目标与KPI / 身份配置 / Agent团队 / 终端分配 / 流程任务 / 结果反馈 / 项目设置
 
 ---
 
-## UI一致性
+## 禁止事项
 
-新增页面必须：
-
-- 复用已有组件
-- 不随意创建新样式
-- 不破坏 UI 统一性
+- 禁止新增 `.module.css` 文件（新页面使用 Tailwind）
+- 禁止使用 `style={{}}` 内联样式
+- 禁止使用 `!important`
+- 禁止使用 `alert()` 或 `window.confirm()`（用 sonner toast + Dialog）
+- 禁止大阴影（shadow-lg 以上仅弹窗/抽屉使用）
+- 禁止纯黑 #000 或纯白 #fff（使用 design token 中性色）
+- 禁止在组件中硬编码中文映射（集中到 labels.ts）
+- 禁止使用 emoji 替代 Lucide 图标

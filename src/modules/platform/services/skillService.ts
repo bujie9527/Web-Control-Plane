@@ -59,3 +59,12 @@ export async function getSkillsByIds(ids: string[]): Promise<Skill[]> {
   return all.filter((s) => idSet.has(s.id))
 }
 
+export async function importOpenClawSkill(payload: {
+  content: string
+  format?: 'auto' | 'json' | 'yaml'
+}): Promise<Skill> {
+  const res = await skillRepo.importOpenClawSkill(payload)
+  if (res.code !== 0) throw new Error(res.message)
+  return res.data
+}
+

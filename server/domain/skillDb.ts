@@ -5,9 +5,21 @@ import { prisma } from './prismaClient'
 
 const now = (): string => new Date().toISOString().slice(0, 19).replace('T', ' ')
 
+function parseStringArray(s: string | null | undefined): string[] | undefined {
+  if (!s) return undefined
+  try {
+    const arr = JSON.parse(s) as unknown
+    return Array.isArray(arr) ? arr.map(String) : undefined
+  } catch {
+    return undefined
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function rowToSkill(row: any) {
-  let openClawSpec: { steps?: string[]; inputSchemaJson?: string; outputSchemaJson?: string } | undefined
+  let openClawSpec:
+    | { steps?: string[]; inputSchemaJson?: string; outputSchemaJson?: string }
+    | undefined
   if (row.openClawSpecJson) {
     try {
       openClawSpec = JSON.parse(row.openClawSpecJson) as typeof openClawSpec
@@ -27,6 +39,14 @@ function rowToSkill(row: any) {
     status: row.status,
     isSystemPreset: row.isSystemPreset,
     openClawSpec,
+    inputSchemaJson: row.inputSchemaJson ?? undefined,
+    outputSchemaJson: row.outputSchemaJson ?? undefined,
+    executionConfigJson: row.executionConfigJson ?? undefined,
+    promptTemplate: row.promptTemplate ?? undefined,
+    requiredContextFields: parseStringArray(row.requiredContextFields),
+    estimatedDurationMs: row.estimatedDurationMs ?? undefined,
+    retryable: row.retryable ?? true,
+    maxRetries: row.maxRetries ?? 1,
     boundAgentTemplateIds: undefined,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -51,6 +71,14 @@ export interface CreateSkillPayload {
   version?: string
   status?: string
   openClawSpec?: { steps?: string[]; inputSchemaJson?: string; outputSchemaJson?: string }
+  inputSchemaJson?: string
+  outputSchemaJson?: string
+  executionConfigJson?: string
+  promptTemplate?: string
+  requiredContextFields?: string[]
+  estimatedDurationMs?: number
+  retryable?: boolean
+  maxRetries?: number
 }
 
 export interface UpdateSkillPayload {
@@ -62,6 +90,14 @@ export interface UpdateSkillPayload {
   version?: string
   status?: string
   openClawSpec?: { steps?: string[]; inputSchemaJson?: string; outputSchemaJson?: string }
+  inputSchemaJson?: string
+  outputSchemaJson?: string
+  executionConfigJson?: string
+  promptTemplate?: string
+  requiredContextFields?: string[]
+  estimatedDurationMs?: number
+  retryable?: boolean
+  maxRetries?: number
 }
 
 export async function dbListSkills(params: SkillListParams): Promise<{
@@ -120,6 +156,16 @@ export async function dbCreateSkill(payload: CreateSkillPayload): Promise<Return
       status: payload.status ?? 'active',
       isSystemPreset: false,
       openClawSpecJson: payload.openClawSpec ? JSON.stringify(payload.openClawSpec) : null,
+      inputSchemaJson: payload.inputSchemaJson ?? null,
+      outputSchemaJson: payload.outputSchemaJson ?? null,
+      executionConfigJson: payload.executionConfigJson ?? null,
+      promptTemplate: payload.promptTemplate ?? null,
+      requiredContextFields: payload.requiredContextFields
+        ? JSON.stringify(payload.requiredContextFields)
+        : null,
+      estimatedDurationMs: payload.estimatedDurationMs ?? null,
+      retryable: payload.retryable ?? true,
+      maxRetries: payload.maxRetries ?? 1,
       createdAt: ts,
       updatedAt: ts,
     },
@@ -142,9 +188,18 @@ export async function dbUpdateSkill(
   if (payload.status !== undefined) data.status = payload.status
   if (payload.openClawSpec !== undefined)
     data.openClawSpecJson = payload.openClawSpec ? JSON.stringify(payload.openClawSpec) : null
+  if (payload.inputSchemaJson !== undefined) data.inputSchemaJson = payload.inputSchemaJson
+  if (payload.outputSchemaJson !== undefined) data.outputSchemaJson = payload.outputSchemaJson
+  if (payload.executionConfigJson !== undefined) data.executionConfigJson = payload.executionConfigJson
+  if (payload.promptTemplate !== undefined) data.promptTemplate = payload.promptTemplate
+  if (payload.requiredContextFields !== undefined)
+    data.requiredContextFields = JSON.stringify(payload.requiredContextFields)
+  if (payload.estimatedDurationMs !== undefined) data.estimatedDurationMs = payload.estimatedDurationMs
+  if (payload.retryable !== undefined) data.retryable = payload.retryable
+  if (payload.maxRetries !== undefined) data.maxRetries = payload.maxRetries
   await prisma.skill.update({
     where: { id },
-    data: data as Record<string, string | null>,
+    data: data as Record<string, string | number | boolean | null>,
   })
   return dbGetSkillById(id)
 }

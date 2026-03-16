@@ -2,7 +2,9 @@
  * 服务端 LLM 解析服务（Phase 17.7a / Phase A）
  * 根据 agentTemplateId 或 modelConfigId 解析最终可执行配置，从 Prisma 读取 Provider/Binding
  */
-import { getCredentialSecret } from './serverStore'
+import {
+  getServerCredentialSecret,
+} from '../data/credentialStore'
 import {
   getProviderByIdFromDb,
   getModelConfigByIdFromDb,
@@ -62,7 +64,7 @@ export async function resolveByModelConfigId(
     return { error: { code: 'CREDENTIAL_NOT_BOUND', messageZh: '提供商未关联凭证' } }
   }
 
-  const apiKey = getCredentialSecret(credentialId)
+  const apiKey = getServerCredentialSecret(credentialId)
   if (!apiKey) {
     return {
       error: {

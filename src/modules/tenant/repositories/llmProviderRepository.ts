@@ -50,18 +50,33 @@ export async function deleteProvider(id: string): Promise<{ success: boolean }> 
   return request<{ success: boolean }>(`/api/llm-providers/${id}`, { method: 'DELETE' })
 }
 
-export async function testProviderConnection(id: string): Promise<{ ok: boolean; messageZh: string }> {
+export async function testProviderConnection(
+  id: string,
+  testModelKey?: string
+): Promise<{ ok: boolean; messageZh: string; latencyMs?: number; testModelKey?: string; testModelSource?: 'request' | 'model_config' }> {
   try {
     const res = await fetch(`${API_BASE}/api/llm/test-provider`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ providerId: id }),
+      body: JSON.stringify({ providerId: id, testModelKey: testModelKey?.trim() || undefined }),
     })
     if (!res.ok) {
       return { ok: false, messageZh: `服务端错误：HTTP ${res.status}` }
     }
-    const data = (await res.json()) as { ok: boolean; messageZh: string }
-    return { ok: data?.ok ?? false, messageZh: data?.messageZh ?? '测试连接失败' }
+    const data = (await res.json()) as {
+      ok: boolean
+      messageZh: string
+      latencyMs?: number
+      testModelKey?: string
+      testModelSource?: 'request' | 'model_config'
+    }
+    return {
+      ok: data?.ok ?? false,
+      messageZh: data?.messageZh ?? '测试连接失败',
+      latencyMs: data?.latencyMs,
+      testModelKey: data?.testModelKey,
+      testModelSource: data?.testModelSource,
+    }
   } catch {
     return { ok: false, messageZh: '网络连接失败，无法测试' }
   }

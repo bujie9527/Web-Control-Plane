@@ -12,14 +12,34 @@ alwaysApply: true
 - **操作系统**: Ubuntu Linux
 - **域名**: ai.667788.cool
 - **部署目录**: /opt/awcc
-- **部署方式**: Git 化部署（GitHub → git pull → build → PM2）
+- **部署方式**: 本机增量上传 + 变更感知部署（PowerShell 脚本）
 
 ## 部署流程
 
 标准更新流程：
-1. 本地完成开发并提交到 GitHub
-2. 服务器执行 `cd /opt/awcc && bash scripts/deploy-update.sh`
-3. 脚本自动执行：git pull → npm ci → prisma generate → vite build → prisma migrate deploy → pm2 restart
+1. 本机执行 `.\scripts\deploy-to-cloud.ps1 -DryRun` 预演本次动作
+2. 本机执行 `.\scripts\deploy-to-cloud.ps1` 正式部署
+3. 脚本自动执行：
+   - 读取 `git status --porcelain`
+   - 增量上传变更文件（新增/修改上传，删除同步删远端）
+   - 按变更类型执行最小步骤（跳过不必要的 npm/build/restart）
+
+### 变更感知执行策略（必须遵守）
+
+- **docs-only / script-only**：
+  - 仅同步文件
+  - 跳过 `npm ci`、`prisma generate`、`vite build`、`pm2 restart`
+- **前端变更（src/index/vite）**：
+  - 执行 `npm run build`
+  - 若无 server/runtime 变更可跳过 `pm2 restart`
+- **后端变更（server）**：
+  - 执行 `pm2 restart awcc`
+  - 无前端改动时跳过 `vite build`
+- **依赖变更（package.json / package-lock.json）**：
+  - 执行 `npm ci`
+- **数据库结构变更（prisma/schema.prisma / prisma/migrations）**：
+  - 执行 `npx prisma generate`
+  - 执行 `npx prisma migrate deploy`
 
 ## 持久化数据
 
@@ -37,6 +57,7 @@ alwaysApply: true
 
 ## 禁止事项
 
-- 禁止直接修改服务器上的代码（应通过 Git 更新）
+- 禁止绕过标准脚本手工全量重建（除故障兜底）
+- 禁止将日常部署退回“每次全量 npm ci + build + restart”
 - 禁止删除 server/data/ 目录下的持久化文件
 - 禁止在生产环境直接运行 prisma migrate dev

@@ -88,31 +88,61 @@ sudo certbot --nginx -d ai.667788.cool
 
 ---
 
-## 日常更新流程（标准）
+## 日常更新流程（固定标准）
 
-当前服务器目录 `/opt/awcc` 已切换为 **Git 仓库**，固定走以下流程：
+当前固定采用：**本机增量上传 + 服务器按变更类型自动执行最小步骤**。  
+标准入口脚本：`scripts/deploy-to-cloud.ps1`（Windows PowerShell）。
 
-### Step 1：本地提交并推送
+### 标准执行命令
 
-```bash
-git add .
-git commit -m "your change"
-git push origin main
+```powershell
+# 预演（只打印动作，不执行）
+.\scripts\deploy-to-cloud.ps1 -DryRun
+
+# 正式部署
+.\scripts\deploy-to-cloud.ps1
 ```
 
-### Step 2：服务器拉取并部署
+### 自动判定策略（加速关键）
+
+脚本会根据 `git status --porcelain` 的变更文件自动选择执行路径：
+
+1. **docs-only / script-only**
+   - 仅同步文件
+   - 跳过 `npm ci` / `build` / `pm2 restart`
+
+2. **前端变更（`src/` / `vite.config.ts` / `index.html`）**
+   - 同步文件
+   - 执行 `npm run build`
+   - 默认跳过 `pm2 restart`（若无 server/runtime 变更）
+
+3. **后端变更（`server/`）**
+   - 同步文件
+   - 跳过前端构建（若 `src/` 未变更）
+   - 执行 `pm2 restart awcc`
+
+4. **依赖变更（`package.json` / `package-lock.json`）**
+   - 执行 `npm ci`
+   - 视情况执行 `build` / `restart`
+
+5. **数据库变更（`prisma/schema.prisma` / `prisma/migrations/`）**
+   - 执行 `npx prisma generate`
+   - 执行 `npx prisma migrate deploy`（容错）
+   - 执行 `pm2 restart awcc`
+
+### 兜底方案
+
+若脚本执行异常，可临时回退到服务器手动执行：
 
 ```bash
-ssh ubuntu@43.160.204.235
 cd /opt/awcc
-USE_PM2=1 bash scripts/deploy-update.sh
+npm ci
+npx prisma generate
+npm run build
+npx prisma migrate deploy
+pm2 restart awcc
+pm2 status awcc
 ```
-
-脚本将执行：`git pull` → `npm ci` → `npx prisma generate` → `npm run build` → `npx prisma migrate deploy`（若有）→ `pm2 restart awcc`。
-
-### 紧急兜底（Git 异常时）
-
-若 Git 临时不可用，可用本机上传方式兜底（`deploy-to-cloud.ps1`），但常规不建议作为主流程。
 
 ---
 

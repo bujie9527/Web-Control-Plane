@@ -21,6 +21,8 @@ const SEED_TEMPLATES = [
     defaultExecutorType: 'agent',
     temperature: 0.7,
     maxTokens: 4096,
+    channelStyleProfiles:
+      '{"telegram_bot":{"styleName":"Telegram 风格","styleInstruction":"300-500字，短段落，结尾互动引导","maxLength":500,"format":"markdown"},"facebook_page":{"styleName":"Facebook 风格","styleInstruction":"150-400字，口语化，结尾带 hashtag","maxLength":400,"format":"text"},"wordpress":{"styleName":"网站风格","styleInstruction":"1000-2000字，结构化小标题，SEO 关键词","maxLength":2000,"format":"html"}}',
     manual: true,
     semi_auto: true,
     full_auto: false,
@@ -241,6 +243,78 @@ const SEED_TEMPLATES = [
     semi_auto: true,
     full_auto: true,
   },
+  {
+    id: 'at-interaction-agent',
+    name: 'Interaction Agent',
+    nameZh: '互动 Agent',
+    code: 'INTERACTION_AGENT',
+    roleType: 'other',
+    category: 'execution',
+    status: 'active',
+    version: 1,
+    supportedSkillIds: '["skill-classify-intent","skill-generate-reply","skill-search-web"]',
+    defaultExecutorType: 'agent',
+    temperature: 0.6,
+    maxTokens: 2048,
+    channelStyleProfiles:
+      '{"telegram":{"tone":"简洁友好","length":"80-180字","format":"text"}}',
+    manual: true,
+    semi_auto: true,
+    full_auto: false,
+  },
+  {
+    id: 'at-community-manager',
+    name: 'Community Manager Agent',
+    nameZh: '社群管理 Agent',
+    code: 'COMMUNITY_MANAGER_AGENT',
+    roleType: 'manager',
+    category: 'coordination',
+    status: 'active',
+    version: 1,
+    supportedSkillIds: '["skill-welcome-member","skill-create-poll","skill-pin-message","skill-delete-message"]',
+    defaultExecutorType: 'agent',
+    temperature: 0.4,
+    maxTokens: 2048,
+    channelStyleProfiles:
+      '{"telegram":{"tone":"运营管理口吻","length":"50-120字","format":"text"}}',
+    manual: true,
+    semi_auto: true,
+    full_auto: false,
+  },
+  {
+    id: 'at-config-assistant',
+    name: 'Config Agent',
+    nameZh: '配置助手 Agent',
+    code: 'CONFIG_AGENT',
+    roleType: 'assistant',
+    category: 'coordination',
+    status: 'active',
+    version: 1,
+    supportedSkillIds: '["skill-parse-config-intent","skill-list-available-resources","skill-configure-project-agent"]',
+    defaultExecutorType: 'agent',
+    temperature: 0.3,
+    maxTokens: 3072,
+    manual: true,
+    semi_auto: true,
+    full_auto: false,
+  },
+  {
+    id: 'at-research-agent',
+    name: 'Research Agent',
+    nameZh: '研究 Agent',
+    code: 'RESEARCH_AGENT',
+    roleType: 'researcher',
+    category: 'execution',
+    status: 'active',
+    version: 1,
+    supportedSkillIds: '["skill-search-web","skill-monitor-social","skill-compose-research-pack"]',
+    defaultExecutorType: 'agent',
+    temperature: 0.4,
+    maxTokens: 3072,
+    manual: true,
+    semi_auto: true,
+    full_auto: false,
+  },
 ]
 
 function defaultTemplateRow(partial: Record<string, unknown>) {
@@ -277,6 +351,7 @@ function defaultTemplateRow(partial: Record<string, unknown>) {
     systemPromptTemplate: null,
     instructionTemplate: null,
     outputFormat: null,
+    channelStyleProfiles: null,
     requireGoalContext: false,
     requireIdentityContext: false,
     requireSOPContext: false,
@@ -320,6 +395,7 @@ export async function seedAgentTemplatesIfEmpty(): Promise<void> {
         defaultExecutorType: t.defaultExecutorType,
         temperature: t.temperature,
         maxTokens: t.maxTokens,
+        channelStyleProfiles: (t as Record<string, unknown>).channelStyleProfiles ?? null,
         parentTemplateId: t.parentTemplateId ?? null,
         sourceTemplateId: t.sourceTemplateId ?? null,
         sourceVersion: t.sourceVersion ?? null,
@@ -335,5 +411,64 @@ export async function seedAgentTemplatesIfEmpty(): Promise<void> {
         updatedAt: ts,
       }),
     })
+  }
+}
+
+export async function seedAgentTemplateBaselines(): Promise<void> {
+  const ts = now()
+  for (const t of SEED_TEMPLATES) {
+    const existing = await prisma.agentTemplate.findUnique({
+      where: { code: t.code },
+      select: { id: true },
+    })
+    const payload = defaultTemplateRow({
+      id: t.id,
+      name: t.name,
+      nameZh: t.nameZh,
+      code: t.code,
+      roleType: t.roleType,
+      category: t.category,
+      status: t.status,
+      version: t.version,
+      supportedProjectTypeIds: t.supportedProjectTypeIds ?? null,
+      supportedGoalTypeIds: t.supportedGoalTypeIds ?? null,
+      supportedSkillIds: t.supportedSkillIds ?? null,
+      defaultExecutorType: t.defaultExecutorType,
+      temperature: t.temperature,
+      maxTokens: t.maxTokens,
+      channelStyleProfiles: (t as Record<string, unknown>).channelStyleProfiles ?? null,
+      parentTemplateId: t.parentTemplateId ?? null,
+      sourceTemplateId: t.sourceTemplateId ?? null,
+      sourceVersion: t.sourceVersion ?? null,
+      plannerDomain: t.plannerDomain ?? null,
+      plannerTier: t.plannerTier ?? null,
+      changeSummary: t.changeSummary ?? null,
+      capabilityNotes: t.capabilityNotes ?? null,
+      platformType: (t as Record<string, unknown>).platformType ?? null,
+      manual: t.manual,
+      semi_auto: t.semi_auto,
+      full_auto: t.full_auto,
+      updatedAt: ts,
+    })
+    if (!existing) {
+      await prisma.agentTemplate.create({ data: payload })
+    } else {
+      await prisma.agentTemplate.update({
+        where: { code: t.code },
+        data: {
+          name: payload.name,
+          nameZh: payload.nameZh,
+          description: payload.description,
+          roleType: payload.roleType,
+          category: payload.category,
+          status: payload.status,
+          supportedSkillIds: payload.supportedSkillIds,
+          channelStyleProfiles: payload.channelStyleProfiles,
+          temperature: payload.temperature,
+          maxTokens: payload.maxTokens,
+          updatedAt: ts,
+        },
+      })
+    }
   }
 }

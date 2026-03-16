@@ -23,7 +23,7 @@ interface Step7Props {
 
 export function Step7Confirm({ form }: Step7Props) {
   const { user } = useAuth()
-  const tenantId = user?.tenant?.tenantId ?? 't1'
+  const tenantId = user?.tenant?.tenantId ?? ''
   const [projectTypeName, setProjectTypeName] = useState('')
   const [goalTypeName, setGoalTypeName] = useState('')
   const [primaryMetricName, setPrimaryMetricName] = useState('')

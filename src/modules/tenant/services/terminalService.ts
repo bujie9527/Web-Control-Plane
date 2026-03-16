@@ -83,6 +83,18 @@ export async function testTerminalById(id: string): Promise<Terminal | null> {
   return res.data
 }
 
+export async function sendTelegramByTerminal(
+  id: string,
+  payload:
+    | { actionType: 'text'; chatId?: string; text: string }
+    | { actionType: 'photo'; chatId?: string; photoUrl: string; caption?: string }
+    | { actionType: 'poll'; chatId?: string; question: string; options: string[] }
+): Promise<{ ok: boolean; actionType: string; telegramMessageId: number | null }> {
+  const res = await terminalRepo.sendTelegramTerminalAction(id, payload)
+  if (res.code !== 0) throw new Error(res.message)
+  return res.data
+}
+
 export async function getTerminalOverview(tenantId: string): Promise<TerminalOverview> {
   const res = await terminalRepo.fetchTerminalList({ tenantId, page: 1, pageSize: 200 })
   if (res.code !== 0) return { total: 0, api: 0, browser: 0, mcp: 0 }
